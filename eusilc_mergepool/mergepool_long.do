@@ -25,6 +25,7 @@
 
 version 16.0
 clear all
+capture log close mlrun
 set more off
 set varabbrev off
 set linesize 200
@@ -536,7 +537,9 @@ program define ml_inventory
     generate byte usable = type_status == "ok" & parse_status == "ok" & (in_build | in_idonly)
     generate byte selected = 0
     generate str sel_status = ""
-    quietly levelsof release_year if usable, local(rels)
+    local rels ""
+    quietly count if usable
+    if r(N) > 0 quietly levelsof release_year if usable, local(rels)
     foreach r of local rels {
         quietly levelsof udb_version if release_year == `r' & usable, local(vers) clean
         local nv : word count `vers'
@@ -725,7 +728,7 @@ capture program drop ml_cohort_link
 program define ml_cohort_link
     tempfile dk gy grp grpb tb edges nodes lab emap nflag keys ckeys newids taken
     keep country release_year udb_version year hid_s rg_s entry_db076
-    quietly duplicates drop
+    if _N > 0 quietly duplicates drop
 
     * (a) coerenza entro release
     bysort country release_year year hid_s: generate int _n_rg = _N
@@ -892,9 +895,16 @@ program define ml_cohort_link
     * (e) tabella dei gruppi con componente e flag
     use `grp', clear
     quietly merge 1:1 node using `nodes', nogenerate
-    quietly merge 1:1 node using `nflag', keep(master match) nogenerate
-    foreach v in node_ambig has_link link_recoded {
-        quietly replace `v' = 0 if missing(`v')
+    if `nedges' > 0 {
+        quietly merge 1:1 node using `nflag', keep(master match) nogenerate
+        foreach v in node_ambig has_link link_recoded {
+            quietly replace `v' = 0 if missing(`v')
+        }
+    }
+    else {
+        foreach v in node_ambig has_link link_recoded {
+            generate byte `v' = 0
+        }
     }
 
     * (f) mapping manuale
@@ -1023,30 +1033,38 @@ program define ml_cohort_link
     if `hasmap' {
         append using "`idmap'", keep(cohort_id)
     }
-    quietly duplicates drop
+    if _N > 0 quietly duplicates drop
     rename cohort_id prop
     generate byte taken = 1
+    local ntaken = _N
     quietly save `taken', emptyok
     restore
     preserve
     quietly keep if id_new
     keep final_key prop
-    quietly duplicates drop
+    if _N > 0 quietly duplicates drop
     if _N > 0 {
         bysort prop (final_key): generate int _k = _n
         bysort prop: generate int _nk = _N
-        quietly merge m:1 prop using `taken', keep(master match) nogenerate
-        quietly replace taken = 0 if missing(taken)
+        if `ntaken' > 0 {
+            quietly merge m:1 prop using `taken', keep(master match) nogenerate
+            quietly replace taken = 0 if missing(taken)
+        }
+        else generate byte taken = 0
         generate str newid = prop if _nk == 1 & !taken
         quietly replace newid = prop + "-" + string(_k) if newid == ""
         keep final_key newid
     }
     else generate str newid = ""
+    local nnew = _N
     quietly save `newids', emptyok
     restore
-    quietly merge m:1 final_key using `newids', keep(master match) nogenerate
-    quietly replace cohort_id = newid if id_new
-    drop newid prop _f _nid
+    if `nnew' > 0 {
+        quietly merge m:1 final_key using `newids', keep(master match) nogenerate
+        quietly replace cohort_id = newid if id_new
+        drop newid
+    }
+    drop prop _f _nid
     bysort cohort_id (final_key): generate byte _split = final_key[1] != final_key[_N]
     quietly count if _split
     if r(N) > 0 {
@@ -1168,10 +1186,16 @@ program define ml_select_cells
             continue
         }
         ml_isid country year cohort_id, code(CELLS_`r')
-        merge m:1 country year cohort_id using `reg', keepusing(src_release) keep(master match)
-        generate byte covered = _merge == 3
-        drop _merge
-        rename src_release covered_by
+        if "`done'" != "" {
+            merge m:1 country year cohort_id using `reg', keepusing(src_release) keep(master match)
+            generate byte covered = _merge == 3
+            drop _merge
+            rename src_release covered_by
+        }
+        else {
+            generate byte covered = 0
+            generate int covered_by = .
+        }
         generate byte f_cty = 0
         generate byte f_ea = 0
         generate byte f_cabs = 0
@@ -1427,7 +1451,7 @@ program define ml_numid
     preserve
     keep `key'
     quietly drop if `key' == ""
-    quietly duplicates drop
+    if _N > 0 quietly duplicates drop
     ml_fexists "`map'"
     if r(exists) {
         quietly merge 1:1 `key' using "`map'", nogenerate
@@ -1998,7 +2022,7 @@ program define ml_build
     ml_savediag "person_household_year"
     preserve
     keep person_uid country cohort_id pid_s
-    quietly duplicates drop
+    if _N > 0 quietly duplicates drop
     ml_isid person_uid, code(PERSON_UID_MAP)
     ml_savediag "person_id_map"
     restore
@@ -2079,8 +2103,12 @@ program define ml_inspect
         local lead0 = r(lead0)
         ml_keepcountries
         local n = _N
-        quietly levelsof country, local(cl) clean
-        quietly levelsof year, local(yl) clean
+        local cl ""
+        local yl ""
+        if `n' > 0 {
+            quietly levelsof country, local(cl) clean
+            quietly levelsof year, local(yl) clean
+        }
         quietly summarize year
         local ymin = r(min)
         local ymax = r(max)
@@ -2191,7 +2219,9 @@ program define ml_inspect
     }
     * collegamento dei gruppi fra le release selezionate
     use "$ML_RUNDIR/inventory.dta", clear
-    quietly levelsof release_year if selected == 1 & ftype == "D", local(drels)
+    local drels ""
+    quietly count if selected == 1 & ftype == "D"
+    if r(N) > 0 quietly levelsof release_year if selected == 1 & ftype == "D", local(drels)
     tempfile keys
     local firstk 1
     foreach r of local drels {
