@@ -2543,11 +2543,16 @@ program define ml_demo
     quietly count if country == "XA" & pid_s == "10501" & year == 2019
     ml_demo_assert `=r(N) == 1' "T6 dati P non duplicati"
     use "`run1'/panel_person_year.dta", clear
-    quietly count if country == "XA" & pid_s == "10501"
+    * la coorte C riusa i DB030 101-120, quindi esiste un altro pid 10501 (T4):
+    * il controllo riguarda la sola coorte A
+    quietly count if country == "XA" & pid_s == "10501" & cohort_id == "`cA'"
     local n10501 = r(N)
+    quietly levelsof person_uid if country == "XA" & pid_s == "10501" & cohort_id == "`cA'", local(pu)
+    local npu : word count `pu'
+    ml_demo_assert `=`n10501' == 4 & `npu' == 1' "T6 identita' personale stabile dopo il cambio di famiglia (coorte A, 2017-2020)"
     quietly levelsof person_uid if country == "XA" & pid_s == "10501", local(pu)
     local npu : word count `pu'
-    ml_demo_assert `=`n10501' == 4 & `npu' == 1' "T6 identita' personale stabile dopo il cambio di famiglia"
+    ml_demo_assert `=`npu' == 2' "T4/T6 pid 10501 riusato dalla coorte C: due persone distinte"
 
     * ---------------------------------------------------------------- run 2
     clear
