@@ -163,7 +163,7 @@ end
 capture program drop ml_savediag
 program define ml_savediag
     args name
-    save "$ML_RUNDIR/`name'.dta", replace
+    save "$ML_RUNDIR/`name'.dta", replace emptyok
     if _N > 0 export delimited using "$ML_RUNDIR/`name'.csv", replace
 end
 
@@ -176,7 +176,7 @@ program define ml_isid
         preserve
         duplicates tag `varlist', generate(_ml_dup)
         keep if _ml_dup > 0
-        save "$ML_RUNDIR/diag_dups_`code'.dta", replace
+        save "$ML_RUNDIR/diag_dups_`code'.dta", replace emptyok
         restore
         if "`soft'" != "" ml_fail "`code'" "chiave non univoca: `varlist'"
         else ml_stop "`code'" "chiave non univoca: `varlist'"
@@ -624,7 +624,7 @@ program define ml_appendsafe
                     generate str2045 labtxt = substr(label, 1, 2045)
                     keep lname value labtxt fileno
                     append using `labs'
-                    quietly save `labs', replace
+                    quietly save `labs', replace emptyok
                 }
             }
             else ml_warn "LABEL_READ_`diag'" "uselabel non riuscito sul file `i' (rc=`rc')"
@@ -680,7 +680,7 @@ program define ml_loadtype, rclass
         generate str udb_version = "`ver'"
         generate str src_file = `"`p`i''"'
         tempfile f`i'
-        quietly save `f`i''
+        quietly save `f`i'', emptyok
         local flist `"`flist' "`f`i''""'
     }
     ml_appendsafe, files(`flist') diag(`ftype'_`rel')
@@ -749,11 +749,11 @@ program define ml_cohort_link
         ml_fail "HID_RG_CHANGE" "`nbad' righe: famiglie che cambiano DB075 entro la stessa release"
     }
     drop _n_rg _chg
-    quietly save `dk'
+    quietly save `dk', emptyok
 
     * (b) tabella dei gruppi
     contract country release_year rg_s year, freq(n_gy)
-    quietly save `gy'
+    quietly save `gy', emptyok
     use `dk', clear
     bysort country release_year rg_s year: generate byte _fy = _n == 1
     collapse (min) ymin=year entry_db076_min=entry_db076 (max) ymax=year entry_db076_max=entry_db076 (sum) nyears=_fy (count) n_hh_years=year (first) udb_version, by(country release_year rg_s)
@@ -761,16 +761,16 @@ program define ml_cohort_link
     sort country release_year rg_s
     generate long node = _n
     local nnodes = _N
-    quietly save `grp'
+    quietly save `grp', emptyok
     rename (release_year rg_s node) (rel_b rg_b node_b)
     keep country rel_b rg_b node_b
-    quietly save `grpb'
+    quietly save `grpb', emptyok
 
     * (c) archi: famiglie-anno condivise fra gruppi di release diverse
     use `dk', clear
     keep country release_year year hid_s rg_s
     rename (release_year rg_s) (rel_b rg_b)
-    quietly save `tb'
+    quietly save `tb', emptyok
     use `dk', clear
     keep country release_year year hid_s rg_s
     joinby country year hid_s using `tb'
@@ -784,7 +784,7 @@ program define ml_cohort_link
         use `gy', clear
         rename (release_year rg_s year n_gy) (rel_b rg_b cy n_b)
         tempfile gyb
-        quietly save `gyb'
+        quietly save `gyb', emptyok
         restore
         merge m:1 country rel_b rg_b cy using `gyb', keep(match) nogenerate
         collapse (sum) n_a n_b (first) m, by(country release_year rg_s rel_b rg_b)
@@ -821,7 +821,7 @@ program define ml_cohort_link
     label variable n_a "famiglie-anno del gruppo A negli anni comuni"
     label variable n_b "famiglie-anno del gruppo B negli anni comuni"
     order country release_year rg_s rel_b rg_b m n_a n_b share_a share_b edge_class accepted edge_ambig rg_recoded
-    quietly save `edges'
+    quietly save `edges', emptyok
     ml_savediag "cohort_links"
 
     * flag per nodo
@@ -832,7 +832,7 @@ program define ml_cohort_link
         keep node_a amb accepted rg_recoded
         rename node_a node
         tempfile na
-        quietly save `na'
+        quietly save `na', emptyok
         restore
         keep node_b amb accepted rg_recoded
         rename node_b node
@@ -847,17 +847,17 @@ program define ml_cohort_link
         generate byte has_link = .
         generate byte link_recoded = .
     }
-    quietly save `nflag'
+    quietly save `nflag', emptyok
 
     * (d) componenti connesse (propagazione dell'etichetta minima)
     use `grp', clear
     keep node
     generate long comp = node
-    quietly save `nodes'
+    quietly save `nodes', emptyok
     use `edges', clear
     quietly keep if accepted == 1
     keep node_a node_b
-    quietly save `emap'
+    quietly save `emap', emptyok
     local changed = _N
     local it 0
     while `changed' > 0 {
@@ -874,7 +874,7 @@ program define ml_cohort_link
         preserve
         keep node_a cmin
         rename node_a node
-        quietly save `lab', replace
+        quietly save `lab', replace emptyok
         restore
         keep node_b cmin
         rename node_b node
@@ -886,7 +886,7 @@ program define ml_cohort_link
         local changed = r(N)
         quietly replace comp = newc
         keep node comp
-        quietly save `nodes', replace
+        quietly save `nodes', replace emptyok
     }
 
     * (e) tabella dei gruppi con componente e flag
@@ -914,7 +914,7 @@ program define ml_cohort_link
         keep country release_year rg_s cohort_label note
         ml_isid country release_year rg_s, code(COHORTMAP_KEYS)
         tempfile mm
-        quietly save `mm'
+        quietly save `mm', emptyok
         restore
         merge 1:1 country release_year rg_s using `mm'
         quietly count if _merge == 2
@@ -970,7 +970,7 @@ program define ml_cohort_link
     generate str source = "DB030 overlap, soglia $ML_OVERLAP_MIN (weak $ML_OVERLAP_WEAK)"
     replace source = "nessun arco accettato" if !has_link
     replace source = "ML_COHORTMAP: " + manual_note if manual
-    quietly save `grp', replace
+    quietly save `grp', replace emptyok
 
     * (h) stesso DB075 nello stesso anno in coorti diverse da release diverse
     use `dk', clear
@@ -990,7 +990,7 @@ program define ml_cohort_link
     quietly merge m:1 country release_year rg_s using `grp', keepusing(final_key) assert(match) nogenerate
     contract final_key year
     contract final_key, freq(obs_nyears)
-    quietly save `ckeys'
+    quietly save `ckeys', emptyok
 
     * (i) cohort_id persistenti
     use `grp', clear
@@ -1026,7 +1026,7 @@ program define ml_cohort_link
     quietly duplicates drop
     rename cohort_id prop
     generate byte taken = 1
-    quietly save `taken'
+    quietly save `taken', emptyok
     restore
     preserve
     quietly keep if id_new
@@ -1042,7 +1042,7 @@ program define ml_cohort_link
         keep final_key newid
     }
     else generate str newid = ""
-    quietly save `newids'
+    quietly save `newids', emptyok
     restore
     quietly merge m:1 final_key using `newids', keep(master match) nogenerate
     quietly replace cohort_id = newid if id_new
@@ -1112,16 +1112,16 @@ program define ml_cohort_link
     * mappa per il resto della pipeline e candidata per la mappa persistente
     preserve
     keep country release_year rg_s cohort_id cohort_status
-    quietly save "$ML_TMPDIR/cohort_map.dta", replace
+    quietly save "$ML_TMPDIR/cohort_map.dta", replace emptyok
     if `hasmap' {
         keep country release_year rg_s cohort_id
         tempfile cur
-        quietly save `cur'
+        quietly save `cur', emptyok
         use "`idmap'", clear
         quietly merge 1:1 country release_year rg_s using `cur', nogenerate update replace
     }
     else keep country release_year rg_s cohort_id
-    quietly save "$ML_TMPDIR/cohort_idmap_candidate.dta", replace
+    quietly save "$ML_TMPDIR/cohort_idmap_candidate.dta", replace emptyok
     restore
 end
 
@@ -1178,7 +1178,7 @@ program define ml_select_cells
         generate byte f_out = 0
         generate byte f_pres = 0
         if "`done'" != "" {
-            quietly save `cand', replace
+            quietly save `cand', replace emptyok
             use "$ML_TMPDIR/windows.dta", clear
             generate byte _d = 0
             foreach s of local done {
@@ -1187,15 +1187,15 @@ program define ml_select_cells
             quietly keep if _d
             drop _d
             rename (release_year ymin ymax) (rel_s ymin_s ymax_s)
-            quietly save `win_s', replace
+            quietly save `win_s', replace emptyok
             use "$ML_TMPDIR/cpres.dta", clear
             rename release_year rel_s
-            quietly save `cpres_s', replace
+            quietly save `cpres_s', replace emptyok
             use "$ML_TMPDIR/cells_all.dta", clear
             keep country release_year year cohort_id
             rename release_year rel_s
             generate byte cell_in_s = 1
-            quietly save `cells_s', replace
+            quietly save `cells_s', replace emptyok
             use `cand', clear
             keep country year cohort_id
             joinby country using `win_s'
@@ -1213,7 +1213,7 @@ program define ml_select_cells
                 generate byte n_pres = cat == 0
                 generate byte one = 1
                 collapse (max) g_cty=one g_ea=n_ea g_cabs=n_cabs g_out=n_out g_pres=n_pres, by(country year cohort_id)
-                quietly save `flags', replace
+                quietly save `flags', replace emptyok
                 use `cand', clear
                 merge 1:1 country year cohort_id using `flags', keep(master match) nogenerate
                 foreach x in cty ea cabs out pres {
@@ -1251,14 +1251,14 @@ program define ml_select_cells
         if r(N) > 0 ml_stop "CELL_DECISION_UNDEFINED" "celle senza decisione nella release `r'"
         preserve
         append using `dec'
-        quietly save `dec', replace
+        quietly save `dec', replace emptyok
         restore
         quietly keep if decision == "accepted"
         rename (release_year udb_version reason) (src_release src_version sel_reason)
         keep country year cohort_id src_release src_version n_hh sel_reason
         append using `reg'
         ml_isid country year cohort_id, code(REGISTRY_AFTER_`r')
-        quietly save `reg', replace
+        quietly save `reg', replace emptyok
         local done `done' `r'
     }
     use `dec', clear
@@ -1275,7 +1275,7 @@ program define ml_select_cells
     ml_isid country year cohort_id, code(REGISTRY_FINAL)
     sort country cohort_id year
     ml_savediag "cell_registry"
-    quietly save "$ML_TMPDIR/cell_registry.dta", replace
+    quietly save "$ML_TMPDIR/cell_registry.dta", replace emptyok
 end
 
 *==============================================================================
@@ -1304,7 +1304,7 @@ program define ml_linkstat
     generate str note = "`note'"
     ml_fexists "$ML_TMPDIR/link_stats.dta"
     if r(exists) append using "$ML_TMPDIR/link_stats.dta"
-    quietly save "$ML_TMPDIR/link_stats.dta", replace
+    quietly save "$ML_TMPDIR/link_stats.dta", replace emptyok
     restore
 end
 
@@ -1314,7 +1314,7 @@ program define ml_link_release
     tempfile dk pers
     use country year hid_s cohort_id hh_uid selected using "$ML_TMPDIR/D_`r'.dta", clear
     ml_isid country year hid_s, code(D_HIDKEY_`r')
-    quietly save `dk'
+    quietly save `dk', emptyok
 
     * --- H ---
     ml_loadtype, rel(`r') ftype(H)
@@ -1339,7 +1339,7 @@ program define ml_link_release
         quietly keep if _merge == 3 & selected == 1
         drop _merge selected
         ml_linkstat `r' "H-D" `a' `b' `c' `=_N' "using-only = D senza H (non risposta, atteso)"
-        quietly save "$ML_TMPDIR/Hsel_`r'.dta", replace
+        quietly save "$ML_TMPDIR/Hsel_`r'.dta", replace emptyok
     }
 
     * --- R ---
@@ -1379,13 +1379,13 @@ program define ml_link_release
     }
     preserve
     collapse (max) psel=selected multi_cohort (min) pselmin=selected (first) cohort_id, by(country year pid_s)
-    quietly save `pers'
+    quietly save `pers', emptyok
     restore
     quietly keep if selected == 1
     drop selected
     generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
     ml_linkstat `r' "R-D" `a' `=`b'+`b0'' `c' `=_N' "master-only con RB040 vuoto: `b0'"
-    quietly save "$ML_TMPDIR/Rsel_`r'.dta", replace
+    quietly save "$ML_TMPDIR/Rsel_`r'.dta", replace emptyok
 
     * --- P ---
     ml_loadtype, rel(`r') ftype(P)
@@ -1413,7 +1413,7 @@ program define ml_link_release
         generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
         drop _merge psel pselmin
         ml_linkstat `r' "P-R" `a' `b' `c' `=_N' "using-only = persone R fuori dall'universo P (atteso)"
-        quietly save "$ML_TMPDIR/Psel_`r'.dta", replace
+        quietly save "$ML_TMPDIR/Psel_`r'.dta", replace emptyok
     }
 end
 
@@ -1441,7 +1441,7 @@ program define ml_numid
     drop _new
     ml_isid `num', code(IDMAP_NUM_`mapname')
     ml_isid `key', code(IDMAP_KEY_`mapname')
-    quietly save "`cand'", replace
+    quietly save "`cand'", replace emptyok
     restore
     merge m:1 `key' using "`cand'", keepusing(`num') keep(master match)
     quietly count if _merge == 1 & `key' != ""
@@ -1566,7 +1566,7 @@ program define ml_weights
         generate byte denom_zero = W_country == 0
         drop _wpos Wg_sd
         if !`first' append using `wd'
-        quietly save `wd', replace
+        quietly save `wd', replace emptyok
         local first 0
         restore
     }
@@ -1585,7 +1585,7 @@ program define ml_weights
     * --- finestre dei pesi longitudinali RB06k (k = 2..6)
     preserve
     keep person_uid year release_year
-    quietly save `pk'
+    quietly save `pk', emptyok
     restore
     local firstw 1
     foreach v of local wv {
@@ -1613,24 +1613,24 @@ program define ml_weights
         }
         generate str weight_var = "`v'"
         generate long win_id = _n
-        quietly save `wtmp', replace
+        quietly save `wtmp', replace emptyok
         keep person_uid win_id w_start w_end w_value
         joinby person_uid using `pk'
         quietly keep if inrange(year, w_start, w_end)
-        quietly save `cov', replace
+        quietly save `cov', replace emptyok
         bysort win_id release_year: generate byte _fr = _n == 1
         collapse (count) n_years_in_window=year (sum) n_src_releases=_fr, by(win_id)
         quietly merge 1:1 win_id using `wtmp', nogenerate
         generate byte window_complete = n_years_in_window == `k'
         generate byte window_mixed_release = n_src_releases > 1
         if !`firstw' append using `wins'
-        quietly save `wins', replace
+        quietly save `wins', replace emptyok
         local firstw 0
         use `cov', clear
         collapse (count) nwin_`v'=win_id (min) wval_`v'=w_value (max) _wmax=w_value, by(person_uid year)
         quietly replace wval_`v' = . if nwin_`v' != 1
         drop _wmax
-        quietly save `elig', replace
+        quietly save `elig', replace emptyok
         restore
         quietly merge 1:1 person_uid year using `elig', keep(master match) nogenerate
         quietly replace nwin_`v' = 0 if missing(nwin_`v')
@@ -1741,7 +1741,7 @@ program define ml_compare_legacy
     preserve
     if `hasyr' contract country year yrelease, freq(n_hh_legacy)
     else contract country year, freq(n_hh_legacy)
-    quietly save `lg'
+    quietly save `lg', emptyok
     use "$ML_RUNDIR/masterD.dta", clear
     if `hasyr' {
         rename src_release yrelease
@@ -1758,7 +1758,7 @@ program define ml_compare_legacy
         ml_idstr hid_s, from(`hv')
         contract country year hid_s
         drop _freq
-        quietly save `lg', replace
+        quietly save `lg', replace emptyok
         use country year hid_s using "$ML_RUNDIR/masterD.dta", clear
         contract country year hid_s
         drop _freq
@@ -1852,10 +1852,10 @@ program define ml_build
         capture confirm numeric variable db076, exact
         if !_rc generate int entry_db076 = year - db076 + 1 if db076 >= 1 & !missing(db076)
         else generate int entry_db076 = .
-        quietly save "$ML_TMPDIR/D_`r'.dta", replace
+        quietly save "$ML_TMPDIR/D_`r'.dta", replace emptyok
         keep country release_year udb_version year hid_s rg_s entry_db076
         if !`firstk' append using `keys'
-        quietly save `keys', replace
+        quietly save `keys', replace emptyok
         local firstk 0
     }
     use `keys', clear
@@ -1871,16 +1871,16 @@ program define ml_build
         if r(N) > 0 ml_stop "D_WITHOUT_COHORT_`r'" "famiglie D senza cohort_id"
         drop _merge
         generate str hh_uid = country + "|" + cohort_id + "|" + hid_s
-        quietly save "$ML_TMPDIR/D_`r'.dta", replace
+        quietly save "$ML_TMPDIR/D_`r'.dta", replace emptyok
         contract country release_year udb_version year cohort_id, freq(n_hh)
         if !`firstc' append using `cells'
-        quietly save `cells', replace
+        quietly save `cells', replace emptyok
         local firstc 0
     }
     use `cells', clear
-    quietly save "$ML_TMPDIR/cells_all.dta", replace
+    quietly save "$ML_TMPDIR/cells_all.dta", replace emptyok
     collapse (min) ymin=year (max) ymax=year, by(country release_year)
-    quietly save "$ML_TMPDIR/windows.dta", replace
+    quietly save "$ML_TMPDIR/windows.dta", replace emptyok
     * presenza paese x release (paese assente da una release)
     preserve
     generate byte present = 1
@@ -1893,7 +1893,7 @@ program define ml_build
     use "$ML_TMPDIR/cells_all.dta", clear
     contract country release_year cohort_id
     drop _freq
-    quietly save "$ML_TMPDIR/cpres.dta", replace
+    quietly save "$ML_TMPDIR/cpres.dta", replace emptyok
 
     ml_select_cells
 
@@ -1904,10 +1904,10 @@ program define ml_build
         merge m:1 country year cohort_id using "$ML_TMPDIR/cell_registry.dta", keepusing(src_release src_version sel_reason) keep(master match)
         generate byte selected = _merge == 3 & src_release == release_year
         drop _merge
-        quietly save "$ML_TMPDIR/D_`r'.dta", replace
+        quietly save "$ML_TMPDIR/D_`r'.dta", replace emptyok
         quietly keep if selected
         drop selected
-        quietly save "$ML_TMPDIR/Dsel_`r'.dta", replace
+        quietly save "$ML_TMPDIR/Dsel_`r'.dta", replace emptyok
         local mfiles `"`mfiles' "$ML_TMPDIR/Dsel_`r'.dta""'
     }
     ml_appendsafe, files(`mfiles') diag(masterD)
@@ -1932,9 +1932,9 @@ program define ml_build
     label variable src_release "release longitudinale da cui proviene la cella"
     label variable year "observation_year"
     char _dta[ml_unit] "famiglia-anno (D)"
-    quietly save "$ML_RUNDIR/masterD.dta", replace
+    quietly save "$ML_RUNDIR/masterD.dta", replace emptyok
     keep country year cohort_id hid_s src_release
-    quietly save "$ML_TMPDIR/masterD_keys.dta", replace
+    quietly save "$ML_TMPDIR/masterD_keys.dta", replace emptyok
 
     * --- record presenti in release vecchie dentro celle coperte da release nuove
     tempfile rd
@@ -1949,7 +1949,7 @@ program define ml_build
         generate byte one = 1
         collapse (sum) n_hh_old=one n_absent_in_selected=absent_in_selected (max) src_release, by(country year cohort_id release_year)
         if !`firstd' append using `rd'
-        quietly save `rd', replace
+        quietly save `rd', replace emptyok
         local firstd 0
     }
     if !`firstd' {
@@ -1986,7 +1986,7 @@ program define ml_build
             ml_isid person_uid year, code(MASTERP_KEY)
             char _dta[ml_unit] "persona-anno 16+ (P)"
         }
-        quietly save "$ML_RUNDIR/master`t'.dta", replace
+        quietly save "$ML_RUNDIR/master`t'.dta", replace emptyok
     }
     use "$ML_TMPDIR/link_stats.dta", clear
     sort release_year step
@@ -2007,7 +2007,7 @@ program define ml_build
     ml_panel
     ml_weights
     char _dta[ml_unit] "persona-anno (xtset person_num year)"
-    quietly save "$ML_RUNDIR/panel_person_year.dta", replace
+    quietly save "$ML_RUNDIR/panel_person_year.dta", replace emptyok
     use "$ML_TMPDIR/panel_varying.dta", clear
     ml_savediag "panel_varying_vars"
     use "$ML_TMPDIR/cohort_idmap_candidate.dta", clear
@@ -2117,7 +2117,7 @@ program define ml_inspect
                 generate int release_year = `r`i''
                 generate str udb_version = "`v`i''"
                 if !`firstr' append using `rel'
-                quietly save `rel', replace
+                quietly save `rel', replace emptyok
                 local firstr 0
                 restore
                 drop _nr
@@ -2139,7 +2139,7 @@ program define ml_inspect
                 generate byte selected = `s`i''
                 quietly levelsof rg_s, local(gl)
                 if !`firstg' append using `grp'
-                quietly save `grp', replace
+                quietly save `grp', replace emptyok
                 local firstg 0
                 restore
                 quietly levelsof rg_s, local(gl)
@@ -2202,7 +2202,7 @@ program define ml_inspect
         else generate int entry_db076 = .
         keep country release_year udb_version year hid_s rg_s entry_db076
         if !`firstk' append using `keys'
-        quietly save `keys', replace
+        quietly save `keys', replace emptyok
         local firstk 0
     }
     if !`firstk' {
@@ -2274,7 +2274,7 @@ program define ml_demo_hh
         generate int entry = `entry'
         generate int dur = `L'
         append using "`acc'"
-        quietly save "`acc'", replace
+        quietly save "`acc'", replace emptyok
     }
     restore
 end
@@ -2293,7 +2293,7 @@ program define ml_demo_row
     generate int entry = `entry'
     generate int dur = `L'
     append using "`acc'"
-    quietly save "`acc'", replace
+    quietly save "`acc'", replace emptyok
     restore
 end
 
@@ -2316,7 +2316,7 @@ program define ml_demo_write
         generate int db060 = mod(hid, 5) + 1
         keep db010 db020 db030 db075 db090 db050 db060
         label variable db075 "Rotation group"
-        quietly save "`outdir'/DEMO_L`r'_v`v'-01_D.dta", replace
+        quietly save "`outdir'/DEMO_L`r'_v`v'-01_D.dta", replace emptyok
         use "`acc'", clear
         quietly keep if release == `r'
         generate int hb010 = year
@@ -2324,7 +2324,7 @@ program define ml_demo_write
         generate long hb030 = hid
         generate double hy020 = 30000
         keep hb010 hb020 hb030 hy020
-        quietly save "`outdir'/DEMO_L`r'_v`v'-01_H.dta", replace
+        quietly save "`outdir'/DEMO_L`r'_v`v'-01_H.dta", replace emptyok
         use "`racc'", clear
         quietly keep if release == `r'
         generate int rb010 = year
@@ -2335,7 +2335,7 @@ program define ml_demo_write
         generate double rb064 = cond(dur == 4 & year == entry + 3, 800 + mod(pid, 5), .)
         generate int rb080 = 1970 + mod(pid, 30)
         keep rb010 rb020 rb030 rb040 rb060 rb064 rb080
-        quietly save "`outdir'/DEMO_L`r'_v`v'-01_R.dta", replace
+        quietly save "`outdir'/DEMO_L`r'_v`v'-01_R.dta", replace emptyok
         use "`racc'", clear
         quietly keep if release == `r'
         bysort country year pid: keep if _n == 1
@@ -2345,7 +2345,7 @@ program define ml_demo_write
         generate double pb040 = 1000 + mod(pid, 7) * 10
         generate double py010g = 20000 + mod(pid, 13) * 1000
         keep pb010 pb020 pb030 pb040 py010g
-        quietly save "`outdir'/DEMO_L`r'_v`v'-01_P.dta", replace
+        quietly save "`outdir'/DEMO_L`r'_v`v'-01_P.dta", replace emptyok
     }
 end
 
@@ -2407,7 +2407,7 @@ program define ml_demo
     use `acc', clear
     * T5: coorte G senza l'anno 2018 nella release 2021 (cella attesa ma assente)
     quietly drop if country == "XB" & rg == 2 & release == 2021 & year == 2018
-    quietly save `acc', replace
+    quietly save `acc', replace emptyok
     * persone: due per famiglia (pid = hid*100 + 1, 2)
     quietly expand 2
     bysort release year country hid: generate long pid = hid * 100 + _n
@@ -2416,7 +2416,7 @@ program define ml_demo
     quietly expand 2 if country == "XA" & pid == 15001, generate(_dup)
     quietly replace pid = 10501 if _dup == 1
     drop _dup
-    quietly save `racc'
+    quietly save `racc', emptyok
     ml_demo_write "`acc'" "`racc'" "`base'/input_run1" "`relA'"
 
     * ---------------------------------------------------------------- run 1
@@ -2534,10 +2534,10 @@ program define ml_demo
     * T7: nella release 2021 i gruppi sono rimescolati al 50%
     quietly replace rg = 6 if release == 2021 & inrange(hid, 511, 520)
     quietly replace rg = 5 if release == 2021 & inrange(hid, 601, 610)
-    quietly save `acc', replace
+    quietly save `acc', replace emptyok
     quietly expand 2
     bysort release year country hid: generate long pid = hid * 100 + _n
-    quietly save `racc', replace
+    quietly save `racc', replace emptyok
     ml_demo_write "`acc'" "`racc'" "`base'/input_run2" "`relC'"
     global ML_INDIR "`base'/input_run2"
     global ML_IDMAPDIR "`base'/idmaps_run2"
