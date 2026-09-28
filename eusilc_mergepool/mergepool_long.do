@@ -1553,7 +1553,8 @@ program define ml_weights
         generate byte _m = missing(`v')
         generate byte _z = `v' == 0
         generate byte _ng = `v' < 0 & !missing(`v')
-        collapse (count) n_rows=year n_valid=`v' (sum) n_missing=_m n_zero=_z n_negative=_ng w_sum=`v', by(country year cohort_id)
+        generate byte _one = 1
+        collapse (sum) n_rows=_one (count) n_valid=`v' (sum) n_missing=_m n_zero=_z n_negative=_ng w_sum=`v', by(country year cohort_id)
         generate str weight_var = "`v'"
         bysort country year: egen double W_country = total(w_sum)
         bysort country year: egen int G_pos = total(w_sum > 0)
@@ -2111,7 +2112,8 @@ program define ml_inspect
                 preserve
                 bysort country year pid_s: keep if _n == 1
                 generate byte multi = _nr > 1
-                collapse (count) n_persons=year (sum) n_multi_rel=multi, by(country year)
+                generate byte _one = 1
+                collapse (sum) n_persons=_one n_multi_rel=multi, by(country year)
                 generate int release_year = `r`i''
                 generate str udb_version = "`v`i''"
                 if !`firstr' append using `rel'
@@ -2154,7 +2156,8 @@ program define ml_inspect
             generate byte _m = missing(`v')
             generate byte _z = `v' == 0
             generate byte _ng = `v' < 0 & !missing(`v')
-            collapse (count) n=year (sum) nm=_m nz=_z nn=_ng s=`v', by(country year)
+            generate byte _one = 1
+            collapse (sum) n=_one nm=_m nz=_z nn=_ng s=`v', by(country year)
             local nr = _N
             forvalues j = 1/`nr' {
                 post `pw' ("`t'") (`r`i'') ("`v`i''") (country[`j']) (year[`j']) ("`v'") (n[`j']) (nm[`j']) (nz[`j']) (nn[`j']) (s[`j'])
