@@ -34,9 +34,20 @@ set linesize 200
 *==============================================================================
 
 * --- Percorsi (usare "/" anche su Windows; nessuna "/" finale) ---------------
-global ML_INDIR    "C:/dati/eusilc/dta"      // .dta gia' convertiti ed etichettati (sola lettura)
-global ML_WORKDIR  "C:/dati/eusilc/work"     // file intermedi
-global ML_OUTDIR   "C:/dati/eusilc/out"      // output (una sottocartella per run)
+* ML_INDIR = cartella dei .dta LONGITUDINALI (non DATA_LONG, che contiene i CSV).
+* Struttura attesa (ricerca ricorsiva, spazi nei nomi ammessi):
+*   DATA/LONG/HOUSEHOLD REGISTER/long_hh_d_AAAA.dta   (D)
+*   DATA/LONG/HOUSEHOLD/long_hh_h_AAAA.dta            (H)
+*   DATA/LONG/PERSONAL REGISTER/long_rl_AAAA.dta      (R)
+*   DATA/LONG/PERSONAL/long_pd_AAAA.dta               (P)
+* AAAA = anno della release longitudinale; il tipo e' riconosciuto dalle variabili.
+global ML_INDIR    "/Volumes/ext_blu/EUSILC/DATA/LONG"   // sola lettura
+global ML_WORKDIR  "/Volumes/ext_blu/EUSILC/WORK_LONG"   // file intermedi (creata se manca)
+global ML_OUTDIR   "/Volumes/ext_blu/EUSILC/OUTPUT"      // output (una sottocartella per run)
+* Filtri sul nome dei file (espressioni regolari ICU; "" = nessun filtro).
+* "^long_" esclude p.es. DATA/LONG/HOUSEHOLD/cross_hh_h_2005.dta (trasversale).
+global ML_FNAME_INCLUDE "^long_"
+global ML_FNAME_EXCLUDE ""
 
 * --- Modalita': inspect | build | demo ----------------------------------------
 global ML_MODE     "inspect"
@@ -350,7 +361,7 @@ program define ml_setup
     file close `fh'
     file open `fh' using "$ML_RUNDIR/run_config.txt", write replace text
     file write `fh' "mergepool_long.do v0.1 - Stata `c(stata_version)' - `c(os)' - `c(current_date)' `c(current_time)'" _n
-    foreach g in ML_MODE ML_INDIR ML_WORKDIR ML_OUTDIR ML_COUNTRIES ML_RELEASES ML_ID_RELEASES ML_FILEMAP ML_COHORTMAP ML_DESIGNFILE ML_OVERLAP_MIN ML_OVERLAP_WEAK ML_CELLPOLICY ML_WEIGHTMODE ML_LWIN_ANCHOR ML_WEIGHTVARS ML_DESIGNVARS ML_POPFILE ML_GR2EL ML_LEGACYDIR ML_IDMAPDIR {
+    foreach g in ML_MODE ML_INDIR ML_WORKDIR ML_OUTDIR ML_FNAME_INCLUDE ML_FNAME_EXCLUDE ML_COUNTRIES ML_RELEASES ML_ID_RELEASES ML_FILEMAP ML_COHORTMAP ML_DESIGNFILE ML_OVERLAP_MIN ML_OVERLAP_WEAK ML_CELLPOLICY ML_WEIGHTMODE ML_LWIN_ANCHOR ML_WEIGHTVARS ML_DESIGNVARS ML_POPFILE ML_GR2EL ML_LEGACYDIR ML_IDMAPDIR {
         file write `fh' "`g' = ${`g'}" _n
     }
     foreach r in $ML_RELEASES $ML_ID_RELEASES {
@@ -361,33 +372,77 @@ program define ml_setup
 end
 
 * Elenco ricorsivo dei .dta (nessuna struttura di cartelle imposta).
+* Esclusi: file AppleDouble di macOS ("._nome.dta"), file temporanei ("~"),
+* cartelle nascoste; poi filtri ML_FNAME_INCLUDE / ML_FNAME_EXCLUDE sul nome.
 capture program drop ml_listdta
 program define ml_listdta
     args dir postname
     local fl : dir "`dir'" files "*.dta"
     foreach f of local fl {
+        if substr("`f'", 1, 2) == "._" | substr("`f'", 1, 1) == "~" continue
+        if `"$ML_FNAME_INCLUDE"' != "" {
+            if !ustrregexm("`f'", `"$ML_FNAME_INCLUDE"') continue
+        }
+        if `"$ML_FNAME_EXCLUDE"' != "" {
+            if ustrregexm("`f'", `"$ML_FNAME_EXCLUDE"') continue
+        }
         post `postname' (`"`dir'/`f'"') (`"`f'"')
     }
     local dl : dir "`dir'" dirs "*"
     foreach d of local dl {
+        if substr("`d'", 1, 1) == "." continue
         ml_listdta "`dir'/`d'" `postname'
     }
 end
 
-* Release e versione dal nome file. Due pattern per la release:
-*   rel_a: "L-2019", "L_2019", "l2019"     rel_b: "l19D", "L19R" (formato breve)
+* Release e versione dal nome file. Tre pattern per la release:
+*   rel_a: "L-2019", "L_2019", "l2019"      rel_b: "l19D", "L19R" (formato breve)
+*   rel_c: anno finale "..._2019.dta" (es. long_hh_d_2019.dta, long_rl_2019.dta)
 * Versione: primo "AAAA-MM" / "AAAA_MM" / "AAAA.MM" con mese valido.
-* In caso di disaccordo il file non viene assegnato: usare ML_FILEMAP.
+* Se i pattern trovati non concordano il file non viene assegnato: usare ML_FILEMAP.
 capture program drop ml_parsefname
 program define ml_parsefname
     generate int rel_a = real(ustrregexs(1)) if ustrregexm(fname, "[Ll][-_ ]?(20[0-9][0-9])")
     generate int rel_b = 2000 + real(ustrregexs(1)) if ustrregexm(fname, "[Ll]([0-2][0-9])[DHRPdhrp]")
+    generate int rel_c = real(ustrregexs(1)) if ustrregexm(fname, "[-_ ](20[0-9][0-9])\.[Dd][Tt][Aa]$")
     generate str udb_version = ustrregexs(1) + "-" + ustrregexs(2) if ustrregexm(fname, "(20[0-9][0-9])[-_.](0[1-9]|1[0-2])([^0-9]|$)")
-    generate int release_year = cond(!missing(rel_a), rel_a, rel_b)
+    generate int release_year = cond(!missing(rel_a), rel_a, cond(!missing(rel_b), rel_b, rel_c))
     generate str parse_status = "ok"
     replace parse_status = "release_not_parsed" if missing(release_year)
     replace parse_status = "release_ambiguous" if !missing(rel_a) & !missing(rel_b) & rel_a != rel_b
-    drop rel_a rel_b
+    replace parse_status = "release_ambiguous" if !missing(rel_c) & !missing(release_year) & rel_c != release_year
+    drop rel_a rel_b rel_c
+end
+
+* Carica un file tenendo solo i paesi configurati gia' in lettura (i .dta
+* possono contenere tutti i paesi). Se il codice paese non e' stringa
+* (errore 109) il file viene caricato per intero e filtrato dopo.
+capture program drop ml_usecty
+program define ml_usecty
+    args p ftype
+    local f = lower("`ftype'")
+    quietly describe using `"`p'"', varlist
+    local rvl `r(varlist)'
+    local cv ""
+    foreach v of local rvl {
+        if lower("`v'") == "`f'b020" local cv `v'
+    }
+    if "`cv'" != "" {
+        local cond ""
+        foreach c of global ML_COUNTRIES {
+            local cond `"`cond' | strtrim(`cv') == "`c'""'
+            if "`c'" == "EL" & $ML_GR2EL == 1 local cond `"`cond' | strtrim(`cv') == "GR""'
+        }
+        local cond = substr(`"`cond'"', 4, .)
+        capture use if `cond' using `"`p'"', clear
+        local rc = _rc
+        if `rc' == 0 exit
+        if `rc' != 109 {
+            di as error "lettura non riuscita: `p' (rc=`rc')"
+            exit `rc'
+        }
+    }
+    use `"`p'"', clear
 end
 
 * Inventario: $ML_RUNDIR/inventory.dta e inventory_releases.dta
@@ -611,7 +666,7 @@ program define ml_loadtype, rclass
     }
     local flist ""
     forvalues i = 1/`nf' {
-        use `"`p`i''"', clear
+        ml_usecty `"`p`i''"' `ftype'
         ml_lower
         ml_keys, ftype(`ftype')
         local k_nmiss = r(nmiss)
@@ -2008,7 +2063,7 @@ program define ml_inspect
     forvalues i = 1/`nf' {
         local t = "`t`i''"
         local f = lower("`t'")
-        use `"`p`i''"', clear
+        ml_usecty `"`p`i''"' `t'
         capture noisily ml_lower
         local rc = _rc
         if `rc' == 0 {
@@ -2303,7 +2358,7 @@ end
 
 capture program drop ml_demo
 program define ml_demo
-    local saved "ML_INDIR ML_WORKDIR ML_OUTDIR ML_COUNTRIES ML_RELEASES ML_ID_RELEASES ML_FILEMAP ML_COHORTMAP ML_DESIGNFILE ML_CELLPOLICY ML_WEIGHTMODE ML_IDMAPDIR ML_POPFILE ML_LEGACYDIR ML_LWIN_ANCHOR"
+    local saved "ML_INDIR ML_WORKDIR ML_OUTDIR ML_FNAME_INCLUDE ML_FNAME_EXCLUDE ML_COUNTRIES ML_RELEASES ML_ID_RELEASES ML_FILEMAP ML_COHORTMAP ML_DESIGNFILE ML_CELLPOLICY ML_WEIGHTMODE ML_IDMAPDIR ML_POPFILE ML_LEGACYDIR ML_LWIN_ANCHOR"
     foreach g of local saved {
         local sv_`g' `"${`g'}"'
     }
@@ -2366,6 +2421,8 @@ program define ml_demo
     global ML_WORKDIR "`base'/work"
     global ML_OUTDIR "`base'/out"
     global ML_IDMAPDIR "`base'/idmaps_run1"
+    global ML_FNAME_INCLUDE "^DEMO_"
+    global ML_FNAME_EXCLUDE ""
     global ML_COUNTRIES "XA XB"
     global ML_RELEASES "2019 2020 2021 2022"
     global ML_ID_RELEASES ""

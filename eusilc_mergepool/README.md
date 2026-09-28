@@ -45,7 +45,8 @@ Dall'ambiente di sviluppo i siti Eurostat, ISTAT e GESIS erano **bloccati**. Ho 
 
 ## 3. Uso
 1. Blocco 0 del do-file: imposta `ML_INDIR`, `ML_WORKDIR`, `ML_OUTDIR` (con `/`), `ML_COUNTRIES "IT"` e `ML_RELEASES`. Se hai più versioni della stessa release, aggiungi `global ML_UDBVER_2021 "2023-09"`.
-2. Se i nomi dei file non contengono `L-2021`, `l21D` o simili, usa un CSV `ML_FILEMAP`:
+   Configurazione attuale: `ML_INDIR "/Volumes/ext_blu/EUSILC/DATA/LONG"` e `ML_FNAME_INCLUDE "^long_"`. La release si legge dall'anno finale del nome (`long_hh_d_2021.dta`), il tipo D/H/R/P dalle variabili. I file AppleDouble `._*` vengono ignorati.
+2. Se i nomi dei file non contengono `L-2021`, `l21D`, `..._2021.dta` o simili, usa un CSV `ML_FILEMAP`:
    ```
    path,release_year,udb_version,ftype
    C:/dati/L2021/it_D.dta,2021,2023-09,D
