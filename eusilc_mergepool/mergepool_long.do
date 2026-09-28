@@ -2386,6 +2386,7 @@ program define ml_demo_assert
     else {
         di as error "  FALLITO  `label'"
         global ML_DEMO_NFAIL = $ML_DEMO_NFAIL + 1
+        global ML_DEMO_FAILED `"$ML_DEMO_FAILED | `label'"'
     }
 end
 
@@ -2405,6 +2406,7 @@ program define ml_demo
         ml_mkdir "`base'`sub'"
     }
     global ML_DEMO_NFAIL 0
+    global ML_DEMO_FAILED ""
     tempfile acc racc
 
     * ---------------------------------------------------------------- dati run 1
@@ -2598,6 +2600,8 @@ program define ml_demo
     }
     if $ML_DEMO_NFAIL > 0 {
         di as error "DEMO: $ML_DEMO_NFAIL test falliti. Cartelle: `run1'  `run2'"
+        di as error `"Test falliti: $ML_DEMO_FAILED"'
+        di as error "Vedi anche `run1'/certification_failures.txt e warnings.txt"
         exit 9
     }
     di as result "DEMO SUPERATA: tutti i test OK. Cartelle: `run1'  `run2'"
