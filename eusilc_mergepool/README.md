@@ -66,3 +66,17 @@ Dall'ambiente di sviluppo i siti Eurostat, ISTAT e GESIS erano **bloccati**. Ho 
 - **Implementato**: l'intera pipeline per un paese qualsiasi, controllata dai dati. Nulla è specifico dell'Italia, a parte la configurazione.
 - **Per certificare l'Italia servono** gli output di `inspect` (`inspect_groups`, `cohort_links`, `cohort_groups`, `inspect_files`) e la conferma documentale delle coorti prolungate da inserire in `ML_DESIGNFILE`.
 - **Altri paesi**: vanno aggiunti a `ML_COUNTRIES` uno per volta, rilanciando `inspect`. FR/BE/BG (coorti lunghe), ES/FI/PT (riuso di DB030), LU/NO/IS (disegni misti) e SE/IE/HR/SK (release mancanti o anomale) richiedono di leggere `cohort_links` e probabilmente un `ML_COHORTMAP`. Nessuna esclusione storica è ereditata in automatico.
+
+## 5. Italia: risultati dell'inspect (L-2019…L-2024, 2 ottobre 2026)
+
+- **Identità delle coorti risolta dai dati.** I 37 collegamenti fra release sono tutti "strong", con quota ≥ 0,99996 in entrambe le direzioni; non ci sono ambiguità né conflitti. DB030 è stabile fra release.
+- **DB076 (dal 2021).** L'anno d'ingresso `year − DB076 + 1` coincide per ogni coorte con il primo anno osservato. La semantica di DB076 resta verificata solo sui dati, non sul documento Eurostat.
+- **Disegno.** Le coorti con ingresso 2016–2019 sono osservate per **6 anni**: quella del 2016 va dal 2016 al 2021 ed è quindi presente già nell'operazione 2020 come quinta onda. I valori di DB075 vengono riusati: rg4 nel 2016 e nel 2022, rg1 nel 2017 e nel 2023. Le coppie restano separate perché i loro anni non si sovrappongono.
+- **Finestre pubblicate.** Fino a L-2020 sono di 4 anni (la coorte 2016 in L-2020 copre solo 2017–2020); da L-2021 sono di 6 anni. Una coorte non compare nella release del suo anno d'ingresso. La release più recente contiene quindi la storia completa di ogni coorte, e la selezione delle celle prende ogni coorte da una sola release.
+- **Copertura.** Con le release 2019–2024 gli anni 2016–2018 hanno solo le coorti entrate dal 2016 in poi. Per coprirli con le coorti 2013–2015 bisogna aggiungere L-2016…L-2018 (o tutte le release dal 2005) a `ML_RELEASES`, dopo un nuovo inspect.
+- **Pesi.** `RB060` somma a circa G × popolazione (calibrazione per coorte), con un'eccezione da verificare nell'ultimo anno di L-2023 e L-2024 (≈ 5,9 × pop con 5 coorti). **RB062–RB066 compaiono solo nell'anno finale di ogni release e sommano a ≈ popolazione**: sono pesi della release, calibrati sull'insieme delle coorti che coprono la finestra, non coorte per coorte. Conseguenze:
+  - i pesi longitudinali si leggono da tutte le righe R di ogni release (non solo dalle celle selezionate) e vanno in `long_weight_windows.dta` (persona × peso × release, con la completezza della finestra nel panel);
+  - nel panel `nwin_rb06k` conta le finestre che coprono la persona-anno, e `wval_rb06k` è valorizzato solo se la finestra è unica;
+  - la riscalatura `legacy` di RB064 (W_g/W) non ha giustificazione per pesi già calibrati sull'insieme delle coorti: va tenuta solo come confronto storico.
+  - `PB080` è sempre mancante; la `legacy` lo salta con un avviso. Il peso personale disponibile è `PB050`.
+- **Regole di disegno documentate** in `config/design_IT.csv`. Si attivano con `ML_DESIGNFILE` e servono solo alla diagnostica (`DESIGN_DURATION_MISMATCH`).

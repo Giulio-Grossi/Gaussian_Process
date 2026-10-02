@@ -74,6 +74,8 @@ global ML_COHORTMAP   ""
 * Regole di disegno documentate: country,entry_from,entry_to,duration,source,status
 *   usate SOLO come diagnostica (durata prevista vs osservata), mai come chiave.
 global ML_DESIGNFILE  ""
+* esempio: global ML_DESIGNFILE "/Volumes/ext_blu/EUSILC/SCRIPT/SCRIPT LONG/design_IT.csv"
+*          (copia di config/design_IT.csv del repository)
 
 * --- Collegamento coorti fra release -------------------------------------------
 * Quota minima di famiglie-anno condivise (entrambe le direzioni) per unire due gruppi.
@@ -174,11 +176,13 @@ program define ml_isid
     syntax varlist, Code(string) [Soft]
     capture isid `varlist', missok
     if _rc {
-        preserve
+        * niente preserve: ml_isid puo' essere chiamato dentro un preserve
+        tempfile hold
+        quietly save `hold', emptyok
         duplicates tag `varlist', generate(_ml_dup)
-        keep if _ml_dup > 0
+        quietly keep if _ml_dup > 0
         save "$ML_RUNDIR/diag_dups_`code'.dta", replace emptyok
-        restore
+        use `hold', clear
         if "`soft'" != "" ml_fail "`code'" "chiave non univoca: `varlist'"
         else ml_stop "`code'" "chiave non univoca: `varlist'"
     }
@@ -1108,6 +1112,11 @@ program define ml_cohort_link
         if r(N) > 0 ml_fail "DESIGNFILE_OVERLAP" "regole di disegno sovrapposte per la stessa coorte"
     }
     drop _ndr
+    * coorte conclusa (ultimo anno < ultimo anno dei dati) con durata diversa dalla regola
+    quietly summarize obs_last_year
+    local ylast = r(max)
+    quietly count if !missing(duration_expected) & obs_last_year < `ylast' & obs_nyears != duration_expected
+    if r(N) > 0 ml_warn "DESIGN_DURATION_MISMATCH" "`r(N)' gruppi di coorti concluse con anni osservati diversi dalla durata in ML_DESIGNFILE"
     generate int obs_span = obs_last_year - obs_first_year + 1
     label variable obs_span "estensione osservata (ultimo-primo anno+1): NON e' la durata prevista"
     label variable obs_nyears "anni distinti osservati sull'insieme delle release"
@@ -1151,7 +1160,9 @@ end
 *   - paese assente da tutte le release piu' recenti -> accettata
 *   - per ciascuna release piu' recente s in cui il paese e' presente:
 *       cat 1: anno fuori dalla finestra pubblicata di s
-*       cat 2: anno nella finestra, coorte assente da s (conclusa o non collegata)
+*       cat 4: anno nella finestra, coorte assente da s perche' conclusa prima
+*              dell'ultimo anno di s -> accettata (cohort_ended_before_newer)
+*       cat 2: anno nella finestra, coorte attiva ma assente da s -> accettata con avviso
 *       cat 3: anno nella finestra, coorte presente in s, cella assente in s
 *              = cella ATTESA ma assente -> strict: esclusa; permissive: recuperata
 *       cat 0: cella presente in s ma non selezionata da s (solo per policy)
@@ -1160,7 +1171,11 @@ end
 
 capture program drop ml_select_cells
 program define ml_select_cells
-    tempfile reg dec cand flags win_s cpres_s cells_s
+    tempfile reg dec cand flags win_s cpres_s cells_s clast
+    * ultimo anno osservato di ogni coorte (su tutte le release)
+    use "$ML_TMPDIR/cells_all.dta", clear
+    collapse (max) coh_last=year, by(country cohort_id)
+    quietly save `clast', emptyok
     numlist "$ML_RELS_AVAIL", sort
     local asc `r(numlist)'
     local desc ""
@@ -1201,6 +1216,7 @@ program define ml_select_cells
         generate byte f_cabs = 0
         generate byte f_out = 0
         generate byte f_pres = 0
+        generate byte f_end = 0
         if "`done'" != "" {
             quietly save `cand', replace emptyok
             use "$ML_TMPDIR/windows.dta", clear
@@ -1230,17 +1246,20 @@ program define ml_select_cells
                 drop _merge
                 merge m:1 country rel_s year cohort_id using `cells_s', keep(master match) nogenerate
                 quietly replace cell_in_s = 0 if missing(cell_in_s)
-                generate byte cat = cond(!inwin, 1, cond(!coh_in_s, 2, cond(!cell_in_s, 3, 0)))
+                quietly merge m:1 country cohort_id using `clast', keep(master match) nogenerate
+                * 4 = coorte assente da s perche' conclusa prima dell'ultimo anno di s
+                generate byte cat = cond(!inwin, 1, cond(!coh_in_s, cond(coh_last < ymax_s, 4, 2), cond(!cell_in_s, 3, 0)))
+                generate byte n_end = cat == 4
                 generate byte n_ea = cat == 3
                 generate byte n_cabs = cat == 2
                 generate byte n_out = cat == 1
                 generate byte n_pres = cat == 0
                 generate byte one = 1
-                collapse (max) g_cty=one g_ea=n_ea g_cabs=n_cabs g_out=n_out g_pres=n_pres, by(country year cohort_id)
+                collapse (max) g_cty=one g_ea=n_ea g_cabs=n_cabs g_out=n_out g_pres=n_pres g_end=n_end, by(country year cohort_id)
                 quietly save `flags', replace emptyok
                 use `cand', clear
                 merge 1:1 country year cohort_id using `flags', keep(master match) nogenerate
-                foreach x in cty ea cabs out pres {
+                foreach x in cty ea cabs out pres end {
                     quietly replace f_`x' = 1 if g_`x' == 1
                 }
                 drop g_*
@@ -1258,11 +1277,12 @@ program define ml_select_cells
             }
             else {
                 replace reason = "country_absent_in_newer_releases" if !covered & !f_cty
-                replace reason = "outside_newer_windows" if !covered & f_cty & f_out & !f_cabs & !f_ea & !f_pres
+                replace reason = "outside_newer_windows" if !covered & f_cty & f_out & !f_end & !f_cabs & !f_ea & !f_pres
+                replace reason = "cohort_ended_before_newer" if !covered & f_cty & f_end & !f_cabs & !f_ea & !f_pres
                 replace reason = "cohort_absent_in_newer_window" if !covered & f_cty & f_cabs & !f_ea & !f_pres
                 replace reason = "present_in_newer_not_selected" if !covered & f_pres & !f_ea
                 replace reason = "expected_absent_in_newer" if !covered & f_ea
-                replace decision = "accepted" if inlist(reason, "country_absent_in_newer_releases", "outside_newer_windows", "cohort_absent_in_newer_window")
+                replace decision = "accepted" if inlist(reason, "country_absent_in_newer_releases", "outside_newer_windows", "cohort_ended_before_newer", "cohort_absent_in_newer_window")
                 replace decision = "excluded" if reason == "present_in_newer_not_selected"
                 if "$ML_CELLPOLICY" == "permissive" {
                     replace decision = "accepted" if reason == "expected_absent_in_newer"
@@ -1400,6 +1420,39 @@ program define ml_link_release
         ml_savediag "diag_person_multi_cohort_`r'"
         restore
         ml_fail "PERSON_MULTI_COHORT_`r'" "`mc' righe: persona collegata nello stesso anno a famiglie di coorti diverse"
+    }
+    * pesi longitudinali RB06k da TUTTE le righe della release (anche celle non
+    * selezionate): sono pesi della release, riportati nel suo anno finale.
+    local lwv ""
+    foreach v in rb062 rb063 rb064 rb065 rb066 {
+        capture confirm numeric variable `v', exact
+        if !_rc local lwv `lwv' `v'
+    }
+    if "`lwv'" != "" {
+        preserve
+        egen byte _anylw = rownonmiss(`lwv')
+        quietly keep if _anylw > 0
+        if _N > 0 {
+            generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
+            keep person_uid country cohort_id year release_year `lwv'
+            * piu' relazioni familiari: il peso e' personale e deve coincidere
+            foreach v of local lwv {
+                bysort person_uid year (`v'): generate byte _d = `v'[1] != `v'[_N]
+                quietly count if _d
+                if r(N) > 0 {
+                    tempfile hold
+                    quietly save `hold', replace emptyok
+                    quietly keep if _d
+                    ml_savediag "diag_lweight_differs_`v'_`r'"
+                    use `hold', clear
+                    ml_fail "LWEIGHT_DIFFERS_`v'_`r'" "`v' diverso fra relazioni della stessa persona-anno: vedi diag"
+                }
+                drop _d
+            }
+            bysort person_uid year: keep if _n == 1
+            quietly save "$ML_TMPDIR/lw_src_`r'.dta", replace emptyok
+        }
+        restore
     }
     preserve
     collapse (max) psel=selected multi_cohort (min) pselmin=selected (first) cohort_id, by(country year pid_s)
@@ -1607,22 +1660,37 @@ program define ml_weights
     else ml_warn "NO_WEIGHTS" "nessuna delle variabili in ML_WEIGHTVARS e' presente"
 
     * --- finestre dei pesi longitudinali RB06k (k = 2..6)
+    * Nei dati UDB i RB06k sono riportati nell'anno finale della release che li
+    * calcola (year == release_year) e sommano circa alla popolazione: sono pesi
+    * della release, non delle celle. Si leggono quindi da TUTTE le righe R di
+    * ogni release ($ML_TMPDIR/lw_src.dta, costruito in ml_link_release) e si
+    * collegano al panel tramite person_uid, stabile fra release.
+    * Output: long_weight_windows (persona x peso x release) e, nel panel,
+    * nwin_rb06k = numero di finestre che coprono la persona-anno,
+    * wval_rb06k = valore solo se la finestra e' unica (altrimenti scelta dell'analista).
     preserve
     keep person_uid year release_year
     quietly save `pk', emptyok
     restore
+    local haslw 0
+    ml_fexists "$ML_TMPDIR/lw_src.dta"
+    if r(exists) local haslw 1
     local firstw 1
-    foreach v of local wv {
-        if !inlist("`v'", "rb062", "rb063", "rb064", "rb065", "rb066") continue
+    foreach v in rb062 rb063 rb064 rb065 rb066 {
         local k = real(substr("`v'", 5, 1))
+        if !`haslw' continue
         preserve
-        keep person_uid year release_year cohort_id `v'
+        use "$ML_TMPDIR/lw_src.dta", clear
+        capture confirm numeric variable `v', exact
+        if _rc {
+            restore
+            continue
+        }
+        keep person_uid country cohort_id year release_year `v'
         quietly keep if `v' > 0 & !missing(`v')
         if _N == 0 {
             restore
             generate int nwin_`v' = 0
-            generate byte elig_`v' = 0
-            generate str why_`v' = "no_valid_weight"
             generate double wval_`v' = .
             continue
         }
@@ -1636,40 +1704,64 @@ program define ml_weights
             generate int w_end = w_anchor + `k' - 1
         }
         generate str weight_var = "`v'"
+        generate byte k = `k'
         generate long win_id = _n
         quietly save `wtmp', replace emptyok
-        keep person_uid win_id w_start w_end w_value
+        keep person_uid win_id w_start w_end w_release w_value
         joinby person_uid using `pk'
         quietly keep if inrange(year, w_start, w_end)
+        generate byte _oth = release_year != w_release
         quietly save `cov', replace emptyok
-        bysort win_id release_year: generate byte _fr = _n == 1
-        collapse (count) n_years_in_window=year (sum) n_src_releases=_fr, by(win_id)
-        quietly merge 1:1 win_id using `wtmp', nogenerate
-        generate byte window_complete = n_years_in_window == `k'
-        generate byte window_mixed_release = n_src_releases > 1
+        if _N > 0 {
+            collapse (count) n_years_in_panel=year (sum) n_years_other_src=_oth, by(win_id)
+            quietly merge 1:1 win_id using `wtmp', nogenerate
+        }
+        else {
+            use `wtmp', clear
+            generate long n_years_in_panel = 0
+            generate long n_years_other_src = 0
+        }
+        quietly replace n_years_in_panel = 0 if missing(n_years_in_panel)
+        quietly replace n_years_other_src = 0 if missing(n_years_other_src)
+        generate byte window_complete_in_panel = n_years_in_panel == `k'
         if !`firstw' append using `wins'
         quietly save `wins', replace emptyok
         local firstw 0
         use `cov', clear
-        collapse (count) nwin_`v'=win_id (min) wval_`v'=w_value (max) _wmax=w_value, by(person_uid year)
-        quietly replace wval_`v' = . if nwin_`v' != 1
-        drop _wmax
+        if _N > 0 {
+            collapse (count) nwin_`v'=win_id (min) wval_`v'=w_value (max) _wmax=w_value, by(person_uid year)
+            quietly replace wval_`v' = . if nwin_`v' != 1
+            drop _wmax
+        }
+        else {
+            generate int nwin_`v' = .
+            generate double wval_`v' = .
+            keep person_uid year nwin_`v' wval_`v'
+        }
         quietly save `elig', replace emptyok
+        local nel = _N
         restore
-        quietly merge 1:1 person_uid year using `elig', keep(master match) nogenerate
+        if `nel' > 0 quietly merge 1:1 person_uid year using `elig', keep(master match) nogenerate
+        else {
+            generate int nwin_`v' = .
+            generate double wval_`v' = .
+        }
         quietly replace nwin_`v' = 0 if missing(nwin_`v')
-        generate byte elig_`v' = nwin_`v' == 1
-        generate str why_`v' = cond(nwin_`v' == 0, "no_valid_window", cond(nwin_`v' > 1, "multiple_windows", "ok"))
-        label variable elig_`v' "anno coperto da una sola finestra valida di `v' (ancoraggio $ML_LWIN_ANCHOR)"
-        label variable wval_`v' "valore di `v' della finestra che copre l'anno (se unica)"
+        label variable nwin_`v' "finestre di `v' (tutte le release) che coprono la persona-anno"
+        label variable wval_`v' "valore di `v' se una sola finestra copre l'anno; altrimenti vedi long_weight_windows"
     }
     if !`firstw' {
         preserve
         use `wins', clear
-        order weight_var person_uid w_start w_end w_anchor w_value w_release n_years_in_window window_complete window_mixed_release
-        ml_savediag "long_weight_windows"
-        quietly count if window_mixed_release
-        if r(N) > 0 ml_warn "LWEIGHT_WINDOW_MIXED_RELEASE" "`r(N)' finestre longitudinali composte da celle di release diverse"
+        order weight_var k person_uid country cohort_id w_release w_start w_end w_anchor w_value n_years_in_panel n_years_other_src window_complete_in_panel
+        sort weight_var person_uid w_release
+        label variable w_release "release che ha calcolato il peso (anno finale della finestra se ancoraggio end)"
+        label variable n_years_other_src "anni della finestra presenti nel panel ma prelevati da un'altra release"
+        quietly save "$ML_RUNDIR/long_weight_windows.dta", replace emptyok
+        * riepilogo per peso x release (le righe complete sono troppe per il csv)
+        generate byte _one = 1
+        collapse (sum) n_windows=_one n_complete=window_complete_in_panel (sum) w_sum=w_value, by(weight_var k country w_release)
+        ml_savediag "long_weight_windows_summary"
         restore
     }
 
@@ -1681,6 +1773,11 @@ program define ml_weights
             local out : word 3 of `trip'
             capture confirm numeric variable `src', exact
             if _rc continue
+            quietly count if !missing(`src') & `src' > 0
+            if r(N) == 0 {
+                ml_warn "LEGACY_SKIP_`src'" "`src' assente o sempre mancante/nullo: `out'_legacy non calcolato"
+                continue
+            }
             if "`src'" == "wval_rb064" {
                 generate double lrb064_legacy = wval_rb064
                 label variable lrb064_legacy "LEGACY: RB064 propagato solo nella sua unica finestra"
@@ -2012,6 +2109,17 @@ program define ml_build
         }
         quietly save "$ML_RUNDIR/master`t'.dta", replace emptyok
     }
+    * pesi longitudinali di tutte le release
+    local lwf ""
+    foreach r of global ML_RELS_AVAIL {
+        ml_fexists "$ML_TMPDIR/lw_src_`r'.dta"
+        if r(exists) local lwf `"`lwf' "$ML_TMPDIR/lw_src_`r'.dta""'
+    }
+    if `"`lwf'"' != "" {
+        ml_appendsafe, files(`lwf') diag(lw_src)
+        ml_isid person_uid year release_year, code(LW_SRC_KEY)
+        quietly save "$ML_TMPDIR/lw_src.dta", replace emptyok
+    }
     use "$ML_TMPDIR/link_stats.dta", clear
     sort release_year step
     ml_savediag "link_stats"
@@ -2112,10 +2220,10 @@ program define ml_inspect
         quietly summarize year
         local ymin = r(min)
         local ymax = r(max)
-        if "`t'" == "D" local ess "db010 db020 db030 db075 db040 db050 db060 db090 db095"
+        if "`t'" == "D" local ess "db010 db020 db030 db075 db040 db050 db060 db095"
         if "`t'" == "H" local ess "hb010 hb020 hb030"
         if "`t'" == "R" local ess "rb010 rb020 rb030 rb040 rb060 rb062 rb063 rb064 rb065 rb066 rb110"
-        if "`t'" == "P" local ess "pb010 pb020 pb030 pb040 pb050 pb060 pb080"
+        if "`t'" == "P" local ess "pb010 pb020 pb030 pb050"
         local miss ""
         foreach v of local ess {
             capture confirm variable `v', exact

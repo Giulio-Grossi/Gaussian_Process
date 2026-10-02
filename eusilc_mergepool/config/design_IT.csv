@@ -1,0 +1,3 @@
+country,entry_from,entry_to,duration,source,status
+IT,2016,2023,6,UDB L-2019..L-2024 (inspect 2026-10-02): coorti 2016-2019 osservate 6 anni; DB076 coerente con l'ingresso; ISTAT: 6 gruppi di rotazione,osservato_nei_dati
+IT,2004,2015,4,Disegno standard a 4 onde (nota HOPPER / eusilcpanel_2020); da verificare con inspect su L-2005..L-2018,non_verificato
