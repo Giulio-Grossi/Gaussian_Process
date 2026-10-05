@@ -1352,6 +1352,41 @@ program define ml_linkstat
     restore
 end
 
+* Righe senza D nella release r: le famiglie (hid_s) sono presenti nel D della
+* release r+1? Usato per riconoscere la prima onda della coorte entrante, che
+* alcune release (IT: L-2023, L-2024) pubblicano in H/R/P ma non in D.
+capture program drop ml_nextd
+program define ml_nextd, rclass
+    args r
+    local rn = `r' + 1
+    ml_fexists "$ML_TMPDIR/D_`rn'.dta"
+    if r(exists) {
+        merge m:1 country year hid_s using "$ML_TMPDIR/D_`rn'.dta", keepusing(cohort_id) keep(master match)
+        generate byte in_next_D = _merge == 3
+        drop _merge cohort_id
+        quietly count if in_next_D
+        return scalar n_next = r(N)
+        return scalar checked = 1
+    }
+    else {
+        generate byte in_next_D = .
+        return scalar n_next = .
+        return scalar checked = 0
+    }
+end
+
+* Esito per righe senza D: avviso se sono tutte dell'anno finale della release
+* (prima onda pubblicata senza D), errore altrimenti.
+capture program drop ml_firstwave
+program define ml_firstwave
+    args r what n nother nnext code
+    if `nother' == 0 {
+        local nx = cond(missing(`nnext'), "non verificabile (release successiva assente)", "`nnext' di `n'")
+        ml_warn "`code'_FIRSTWAVE_`r'" "`n' `what' solo nell'anno `r' senza D (prima onda della coorte entrante): esclusi; presenti nel D della release successiva: `nx'"
+    }
+    else ml_fail "`code'_WITHOUT_D_`r'" "`n' `what' senza D, di cui `nother' in anni diversi da `r'"
+end
+
 capture program drop ml_link_release
 program define ml_link_release
     args r
@@ -1376,9 +1411,13 @@ program define ml_link_release
             preserve
             quietly keep if _merge == 1
             keep country year hid_s
+            quietly count if year != `r'
+            local bo = r(N)
+            ml_nextd `r'
+            local nn = r(n_next)
             ml_savediag "diag_H_without_D_`r'"
             restore
-            ml_fail "H_WITHOUT_D_`r'" "`b' famiglie H senza record D"
+            ml_firstwave `r' "famiglie H" `b' `bo' `nn' H
         }
         quietly keep if _merge == 3 & selected == 1
         drop _merge selected
@@ -1403,9 +1442,16 @@ program define ml_link_release
         preserve
         quietly keep if _merge == 1 & hid_s != ""
         keep country year pid_s hid_s
+        quietly count if year != `r'
+        local bo = r(N)
+        ml_nextd `r'
+        local nn = r(n_next)
         ml_savediag "diag_R_without_D_`r'"
+        keep country year pid_s
+        quietly duplicates drop
+        quietly save "$ML_TMPDIR/r_without_d_`r'.dta", replace emptyok
         restore
-        ml_fail "R_WITHOUT_D_`r'" "`b' righe R con RB040 non presente in D"
+        ml_firstwave `r' "righe R" `b' `bo' `nn' R
     }
     if `c' > 0 ml_warn "D_WITHOUT_R_`r'" "`c' famiglie D senza membri in R"
     quietly keep if _merge == 3
@@ -1435,19 +1481,26 @@ program define ml_link_release
         if _N > 0 {
             generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
             keep person_uid country cohort_id year release_year `lwv'
-            * piu' relazioni familiari: il peso e' personale e deve coincidere
+            * piu' relazioni familiari: il peso e' personale. Regola: se fra le
+            * relazioni c'e' un solo valore non mancante lo si usa; se ce ne sono
+            * due diversi il peso e' posto a missing (nessuna scelta arbitraria).
             foreach v of local lwv {
-                bysort person_uid year (`v'): generate byte _d = `v'[1] != `v'[_N]
+                bysort person_uid year: egen double _mn = min(`v')
+                bysort person_uid year: egen double _mx = max(`v')
+                generate byte _d = !missing(_mn) & _mn != _mx
                 quietly count if _d
                 if r(N) > 0 {
+                    local nd = r(N)
                     tempfile hold
                     quietly save `hold', replace emptyok
                     quietly keep if _d
-                    ml_savediag "diag_lweight_differs_`v'_`r'"
+                    keep person_uid year `v'
+                    ml_savediag "diag_lweight_conflict_`v'_`r'"
                     use `hold', clear
-                    ml_fail "LWEIGHT_DIFFERS_`v'_`r'" "`v' diverso fra relazioni della stessa persona-anno: vedi diag"
+                    ml_warn "LWEIGHT_CONFLICT_`v'_`r'" "`nd' righe: `v' con valori diversi fra relazioni della stessa persona-anno, posto a missing (vedi diag)"
                 }
-                drop _d
+                quietly replace `v' = cond(_d, ., _mx)
+                drop _mn _mx _d
             }
             bysort person_uid year: keep if _n == 1
             quietly save "$ML_TMPDIR/lw_src_`r'.dta", replace emptyok
@@ -1480,9 +1533,22 @@ program define ml_link_release
             preserve
             quietly keep if _merge == 1
             keep country year pid_s
+            quietly count if year != `r'
+            local bo = r(N)
+            * spiegati se la persona e' fra le righe R senza D della stessa release
+            local nexp = 0
+            ml_fexists "$ML_TMPDIR/r_without_d_`r'.dta"
+            if r(exists) {
+                merge 1:1 country year pid_s using "$ML_TMPDIR/r_without_d_`r'.dta", keep(master match)
+                generate byte r_without_d = _merge == 3
+                drop _merge
+                quietly count if r_without_d
+                local nexp = r(N)
+            }
             ml_savediag "diag_P_without_R_`r'"
             restore
-            ml_fail "P_WITHOUT_R_`r'" "`b' record P senza persona in R (famiglie D)"
+            if `bo' == 0 & `nexp' == `b' ml_warn "P_FIRSTWAVE_`r'" "`b' record P solo nell'anno `r', tutti di persone R senza D (prima onda della coorte entrante): esclusi"
+            else ml_fail "P_WITHOUT_R_`r'" "`b' record P senza persona in R collegata a D (`nexp' spiegati da R senza D, `bo' in anni diversi da `r')"
         }
         quietly keep if _merge == 3 & psel == 1
         quietly count if pselmin == 0
