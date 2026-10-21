@@ -1813,16 +1813,16 @@ program define ml_weights
             generate double wval_`v' = .
         }
         quietly replace nwin_`v' = 0 if missing(nwin_`v')
-        label variable nwin_`v' "finestre di `v' (tutte le release) che coprono la persona-anno"
-        label variable wval_`v' "valore di `v' se una sola finestra copre l'anno; altrimenti vedi long_weight_windows"
+        label variable nwin_`v' "n. finestre di `v' (tutte le release) sulla persona-anno"
+        label variable wval_`v' "`v' se una sola finestra copre l'anno (vedi long_weight_windows)"
     }
     if !`firstw' {
         preserve
         use `wins', clear
         order weight_var k person_uid country cohort_id w_release w_start w_end w_anchor w_value n_years_in_panel n_years_other_src window_complete_in_panel
         sort weight_var person_uid w_release
-        label variable w_release "release che ha calcolato il peso (anno finale della finestra se ancoraggio end)"
-        label variable n_years_other_src "anni della finestra presenti nel panel ma prelevati da un'altra release"
+        label variable w_release "release che ha calcolato il peso"
+        label variable n_years_other_src "anni della finestra nel panel presi da altra release"
         quietly save "$ML_RUNDIR/long_weight_windows.dta", replace emptyok
         * riepilogo per peso x release (le righe complete sono troppe per il csv)
         generate byte _one = 1
