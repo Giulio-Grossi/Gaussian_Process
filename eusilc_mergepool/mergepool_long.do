@@ -1639,6 +1639,23 @@ program define ml_panel
     local chk : list allv - skip
     tempname ph
     postfile `ph' str32 varname double n_rows str24 action using "$ML_TMPDIR/panel_varying.dta", replace
+    * Pesi personali con piu' relazioni: spesso 0/mancante nella famiglia lasciata
+    * e positivo in quella nuova. Regola: un solo valore positivo distinto => si
+    * usa quello; due valori positivi diversi => missing (gestito dal ciclo sotto).
+    foreach v in rb050 rb060 rb062 rb063 rb064 rb065 rb066 {
+        capture confirm numeric variable `v', exact
+        if _rc continue
+        generate double _pos = `v' if `v' > 0 & !missing(`v')
+        bysort person_uid year: egen double _pmin = min(_pos)
+        bysort person_uid year: egen double _pmax = max(_pos)
+        bysort person_uid year (`v'): generate byte _vr = `v'[1] != `v'[_N]
+        quietly count if _vr & !missing(_pmin) & _pmin == _pmax
+        if r(N) > 0 {
+            post `ph' ("`v'") (r(N)) ("unique_positive_used")
+            quietly replace `v' = _pmin if _vr & !missing(_pmin) & _pmin == _pmax
+        }
+        drop _pos _pmin _pmax _vr
+    }
     foreach v of local chk {
         local t : type `v'
         if "`t'" == "strL" {
