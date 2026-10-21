@@ -2204,6 +2204,24 @@ program define ml_build
             char _dta[ml_unit] "relazione persona-famiglia-anno (R)"
         }
         if "`t'" == "P" {
+            * Una persona-anno puo' avere relazioni in celle prese da release
+            * diverse (famiglie di coorti diverse): il suo record P compare allora
+            * in piu' release. Come per le celle, una sola fonte: la release piu'
+            * recente; le altre righe sono documentate e scartate.
+            bysort person_uid year (release_year): generate int _np = _N
+            quietly count if _np > 1
+            if r(N) > 0 {
+                local nmulti = r(N)
+                tempfile hold
+                quietly save `hold', replace emptyok
+                quietly keep if _np > 1
+                keep person_uid year release_year
+                ml_savediag "diag_P_personyear_multi_release"
+                use `hold', clear
+                bysort person_uid year (release_year): keep if _n == _N
+                ml_warn "P_PERSONYEAR_MULTI_RELEASE" "`nmulti' record P di persone-anno presenti in piu' release: tenuta la piu' recente (vedi diag)"
+            }
+            drop _np
             ml_isid person_uid year, code(MASTERP_KEY)
             char _dta[ml_unit] "persona-anno 16+ (P)"
         }
