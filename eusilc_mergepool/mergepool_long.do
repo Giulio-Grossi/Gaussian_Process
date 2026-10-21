@@ -1083,6 +1083,18 @@ program define ml_cohort_link
     * (j) ingresso e durata previsti (solo diagnostica)
     generate int entry_expected = e_min if !missing(e_min) & e_min == e_max
     generate str entry_source = cond(!missing(entry_expected), "DB076 (year - DB076 + 1)", "non noto")
+    * senza DB076: primo anno osservato, solo se la coorte non parte dal primo
+    * anno della finestra della prima release in cui compare (niente troncamento)
+    bysort country release_year: egen int _rwin = min(ymin)
+    bysort final_key (release_year): generate int _y0 = ymin[1]
+    bysort final_key (release_year): generate int _w0 = _rwin[1]
+    generate byte left_trunc_possible = _y0 == _w0
+    quietly replace entry_source = "primo anno osservato" if missing(entry_expected) & !left_trunc_possible
+    quietly replace entry_source = "non noto (possibile troncamento a sinistra)" if missing(entry_expected) & left_trunc_possible
+    quietly replace entry_expected = obs_first_year if missing(entry_expected) & !left_trunc_possible
+    quietly count if !missing(e_min) & e_min == e_max & !left_trunc_possible & e_min != obs_first_year
+    if r(N) > 0 ml_warn "ENTRY_DB076_VS_FIRST_YEAR" "`r(N)' gruppi con ingresso DB076 diverso dal primo anno osservato"
+    drop _rwin _y0 _w0
     generate int duration_expected = .
     generate str duration_source = ""
     generate str duration_status = ""
