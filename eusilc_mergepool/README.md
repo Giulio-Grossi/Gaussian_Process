@@ -98,3 +98,17 @@ merge m:1 person_uid using `w', keep(match) nogenerate
 keep if inrange(year, 2021, 2024)
 ```
 
+## 6. Italia 2004–2018: inspect esteso (L-2005…L-2024, 21 ottobre 2026)
+
+- **Collegamenti.** 69 gruppi e 87 collegamenti, tutti "strong" (quota ≥ 0,995), nessuna ambiguità. DB030 è stabile anche nelle release vecchie, con poche revisioni di singole famiglie.
+- **Disegno osservato.**
+  - Avvio 2004: i gruppi entrati nel 2004 durano 2 anni (rg2: 2004–05), 3 (rg3: 2004–06) e 4 (rg4: 2004–07). rg1 resta solo nel trasversale.
+  - Coorti 2005–2015: 4 anni ciascuna, con DB075 che ruota 1→2→3→4.
+  - Coorti dal 2016: 6 anni. Il 2015 è quindi l'ultima coorte a 4 anni e il 2016 la prima a 6, senza prolungamenti a metà percorso.
+- **Finestre.** L-2005 copre 2 anni e L-2006 3 (l'indagine parte nel 2004). Da L-2007 a L-2020 le finestre sono di 4 anni, da L-2021 di 6.
+- **Pesi.**
+  - RB062 e RB063 compaiono da L-2006, RB064 da L-2008. Sono sempre e solo nell'anno finale della release e sommano a ≈ popolazione.
+  - Il peso familiare del file D è `DB090` fino a L-2013 e `DB095` da L-2014, entrambi ≈ numero di famiglie: nel panel compaiono come due variabili distinte.
+  - `PB080` è vuoto in tutte le release.
+- **Ingresso senza DB076.** Prima del 2021 l'anno d'ingresso è il primo anno osservato, quando la coorte non parte dal primo anno della finestra della sua prima release. Così `DESIGN_DURATION_MISMATCH` controlla anche le coorti 2005–2015. Le coorti di avvio del 2004 restano "possibile troncamento" e non vengono controllate.
+
