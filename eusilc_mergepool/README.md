@@ -82,4 +82,19 @@ Dall'ambiente di sviluppo i siti Eurostat, ISTAT e GESIS erano **bloccati**. Ho 
 - **Regole di disegno documentate** in `config/design_IT.csv`. Si attivano con `ML_DESIGNFILE` e servono solo alla diagnostica (`DESIGN_DURATION_MISMATCH`).
 - **Prima onda senza D (L-2023, L-2024).** In queste release i file H, R e P contengono anche la prima onda della coorte entrante, cioè l'anno finale della release, mentre D non la contiene. Esempio: L-2023 ha 10.458 famiglie H, 21.605 righe R e 18.546 record P senza D. Queste righe sono escluse perché non hanno DB075 e quindi una coorte. Non si perde nulla: la stessa coorte compare con il suo D nella release successiva (l'anno 2023 della coorte 2023 viene da L-2024). Il codice lo verifica: avviso `*_FIRSTWAVE_*` se tutte le righe sono dell'anno finale della release, con il numero di quelle ritrovate nel D della release successiva; errore altrimenti. La stessa causa spiega la somma di RB060 ≈ 5,9 × popolazione nell'ultimo anno di L-2023 e L-2024: nell'R ci sono 6 coorti, nel D 5. La coorte entrata nel 2024 non è nel panel finché non esce L-2025.
 - **Pesi longitudinali e relazioni multiple.** Se una persona ha più relazioni familiari nello stesso anno e un solo valore non mancante di RB06k, si usa quello. Se i valori sono due e diversi, il peso è posto a missing (avviso `LWEIGHT_CONFLICT_*` con diagnostica).
+- **Build certificato (21 ottobre 2026, IT, L-2019…L-2024).** La run è certificata con 19 avvisi, tutti attesi. La prima onda senza D del 2023 è stata ritrovata per intero nel D di L-2024: 10.458/10.458 famiglie e 21.605/21.605 righe R. Le celle vengono così da una sola release per coorte: L-2021 (coorte 2016), L-2022 (2017), L-2023 (2018) e L-2024 (2019–2023). L-2019 e L-2020 non forniscono celle.
+
+### Uso dei pesi longitudinali (esempio)
+```stata
+* finestra 2021-2024: RB064 calcolato da L-2024, persone osservate in tutti e 4 gli anni
+use "<run>/long_weight_windows.dta", clear
+keep if weight_var == "rb064" & w_release == 2024 & window_complete_in_panel
+keep person_uid w_value
+rename w_value w_rb064_2124
+tempfile w
+save `w'
+use "<run>/panel_person_year.dta", clear
+merge m:1 person_uid using `w', keep(match) nogenerate
+keep if inrange(year, 2021, 2024)
+```
 
