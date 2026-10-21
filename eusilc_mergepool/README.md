@@ -111,4 +111,10 @@ keep if inrange(year, 2021, 2024)
   - Il peso familiare del file D è `DB090` fino a L-2013 e `DB095` da L-2014, entrambi ≈ numero di famiglie: nel panel compaiono come due variabili distinte.
   - `PB080` è vuoto in tutte le release.
 - **Ingresso senza DB076.** Prima del 2021 l'anno d'ingresso è il primo anno osservato, quando la coorte non parte dal primo anno della finestra della sua prima release. Così `DESIGN_DURATION_MISMATCH` controlla anche le coorti 2005–2015. Le coorti di avvio del 2004 restano "possibile troncamento" e non vengono controllate.
+- **Build certificato 2005–2024 (21 ottobre 2026).** Run certificata con 68 avvisi, tutti di tipo atteso.
+  - Una sola eccezione all'appartenenza alla coorte: 2 persone della coorte 2006 compaiono nel 2007 anche in una famiglia della coorte 2004. Restano una sola persona (coorte d'origine) con una relazione `rel_other_cohort`.
+  - Il record P 2007 di una delle due persone era presente in L-2007 e in L-2009: tenuto quello di L-2009.
+  - Nessun `PID_MULTIPLE_UID`: nessun RB030 corrisponde a più `person_uid`, quindi non ci sono persone spezzate fra release.
+  - Nessun `DESIGN_DURATION_MISMATCH`.
+- **Identità personale.** `person_uid` usa la coorte della famiglia nel primo anno osservato della persona (`p_cohort`). Le relazioni con famiglie di altre coorti restano in `masterR`. Per ogni persona-anno il record P viene da una sola release, la più recente.
 
