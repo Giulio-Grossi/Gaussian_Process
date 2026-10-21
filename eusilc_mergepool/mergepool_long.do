@@ -1657,7 +1657,12 @@ program define ml_panel
         drop _vr
     }
     postclose `ph'
+    * coorte nel panel: quella della famiglia (cella) se unica nell'anno,
+    * altrimenti la coorte d'origine della persona
+    bysort person_uid year (cohort_id): generate byte multi_cohort_year = cohort_id[1] != cohort_id[_N]
     bysort person_uid year (hh_uid): keep if _n == 1
+    quietly replace cohort_id = p_cohort if multi_cohort_year
+    label variable multi_cohort_year "relazioni in famiglie di coorti diverse nell'anno: cohort_id = coorte d'origine"
     generate byte multi_hh = n_rel > 1
     label variable multi_hh "persona collegata a piu' famiglie nell'anno: famiglia non assegnata"
     quietly replace hh_uid = "" if multi_hh
