@@ -1468,17 +1468,34 @@ program define ml_link_release
     if `c' > 0 ml_warn "D_WITHOUT_R_`r'" "`c' famiglie D senza membri in R"
     quietly keep if _merge == 3
     drop _merge
+    * Coorte della persona = coorte della famiglia in cui compare nel suo primo
+    * anno osservato nella release (coorte d'origine). La persona conserva questa
+    * identita' anche se poi vive in famiglie di altre coorti; le relazioni con
+    * famiglie di altre coorti restano in masterR (rel_other_cohort = 1).
+    * Ambiguita' (due coorti gia' nel primo anno) => person_uid AMBIGUOUS + errore.
     bysort country year pid_s (cohort_id): generate byte multi_cohort = cohort_id[1] != cohort_id[_N]
-    quietly count if multi_cohort
+    bysort country pid_s: egen int _fy = min(year)
+    generate str _cf = cohort_id if year == _fy
+    generate byte _cfn = _cf != ""
+    bysort country pid_s: egen int _nn = total(_cfn)
+    bysort country pid_s (_cf): generate str p_cohort = _cf[_N]
+    bysort country pid_s (_cf): generate byte p_amb = _cf[_N - _nn + 1] != _cf[_N]
+    generate byte rel_other_cohort = cohort_id != p_cohort
+    drop _fy _cf _cfn _nn
+    label variable p_cohort "coorte d'origine della persona (famiglia nel primo anno osservato)"
+    label variable rel_other_cohort "relazione con famiglia di coorte diversa da quella d'origine"
+    quietly count if rel_other_cohort
     local mc = r(N)
     if `mc' > 0 {
         preserve
-        quietly keep if multi_cohort
-        keep country year pid_s hid_s cohort_id
-        ml_savediag "diag_person_multi_cohort_`r'"
+        quietly keep if rel_other_cohort | multi_cohort
+        keep country year pid_s hid_s cohort_id p_cohort p_amb multi_cohort
+        ml_savediag "diag_person_other_cohort_`r'"
         restore
-        ml_fail "PERSON_MULTI_COHORT_`r'" "`mc' righe: persona collegata nello stesso anno a famiglie di coorti diverse"
+        ml_warn "PERSON_OTHER_COHORT_`r'" "`mc' relazioni con famiglie di coorte diversa da quella d'origine: identita' personale mantenuta (vedi diag)"
     }
+    quietly count if p_amb
+    if r(N) > 0 ml_fail "PERSON_COHORT_AMBIGUOUS_`r'" "`r(N)' righe: persona in famiglie di coorti diverse gia' nel primo anno osservato"
     * pesi longitudinali RB06k da TUTTE le righe della release (anche celle non
     * selezionate): sono pesi della release, riportati nel suo anno finale.
     local lwv ""
@@ -1491,7 +1508,7 @@ program define ml_link_release
         egen byte _anylw = rownonmiss(`lwv')
         quietly keep if _anylw > 0
         if _N > 0 {
-            generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
+            generate str person_uid = country + "|" + cond(p_amb, "AMBIGUOUS", p_cohort) + "|" + pid_s
             keep person_uid country cohort_id year release_year `lwv'
             * piu' relazioni familiari: il peso e' personale. Regola: se fra le
             * relazioni c'e' un solo valore non mancante lo si usa; se ce ne sono
@@ -1520,12 +1537,12 @@ program define ml_link_release
         restore
     }
     preserve
-    collapse (max) psel=selected multi_cohort (min) pselmin=selected (first) cohort_id, by(country year pid_s)
+    collapse (max) psel=selected multi_cohort p_amb (min) pselmin=selected (first) cohort_id p_cohort, by(country year pid_s)
     quietly save `pers', emptyok
     restore
     quietly keep if selected == 1
     drop selected
-    generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
+    generate str person_uid = country + "|" + cond(p_amb, "AMBIGUOUS", p_cohort) + "|" + pid_s
     ml_linkstat `r' "R-D" `a' `=`b'+`b0'' `c' `=_N' "master-only con RB040 vuoto: `b0'"
     quietly save "$ML_TMPDIR/Rsel_`r'.dta", replace emptyok
 
@@ -1565,7 +1582,7 @@ program define ml_link_release
         quietly keep if _merge == 3 & psel == 1
         quietly count if pselmin == 0
         if r(N) > 0 ml_warn "P_PARTIAL_SELECTION_`r'" "`r(N)' persone-anno con relazioni in celle selezionate e non selezionate"
-        generate str person_uid = country + "|" + cond(multi_cohort, "AMBIGUOUS", cohort_id) + "|" + pid_s
+        generate str person_uid = country + "|" + cond(p_amb, "AMBIGUOUS", p_cohort) + "|" + pid_s
         drop _merge psel pselmin
         ml_linkstat `r' "P-R" `a' `b' `c' `=_N' "using-only = persone R fuori dall'universo P (atteso)"
         quietly save "$ML_TMPDIR/Psel_`r'.dta", replace emptyok
@@ -1617,7 +1634,7 @@ capture program drop ml_panel
 program define ml_panel
     use "$ML_RUNDIR/masterR.dta", clear
     bysort person_uid year: generate int n_rel = _N
-    local skip "person_uid year country pid_s hid_s hh_uid hh_num rb040 cohort_id cohort_status release_year udb_version src_file country_orig n_rel multi_cohort"
+    local skip "person_uid year country pid_s hid_s hh_uid hh_num rb040 cohort_id cohort_status release_year udb_version src_file country_orig n_rel multi_cohort p_cohort p_amb rel_other_cohort"
     unab allv : _all
     local chk : list allv - skip
     tempname ph
@@ -2207,10 +2224,25 @@ program define ml_build
     bysort person_uid year: generate int n_rel = _N
     ml_savediag "person_household_year"
     preserve
-    keep person_uid country cohort_id pid_s
+    keep person_uid country pid_s
     if _N > 0 quietly duplicates drop
     ml_isid person_uid, code(PERSON_UID_MAP)
     ml_savediag "person_id_map"
+    restore
+    * stesso RB030 con piu' person_uid: ID riusato da coorti diverse (legittimo)
+    * oppure persona spezzata fra release. Anni contigui suggeriscono la seconda.
+    preserve
+    collapse (min) y_first=year (max) y_last=year, by(country pid_s person_uid)
+    bysort country pid_s: generate int n_uid = _N
+    quietly keep if n_uid > 1
+    if _N > 0 {
+        bysort country pid_s (y_first): generate int gap_prev = y_first - y_last[_n-1] if _n > 1
+        ml_savediag "diag_pid_multiple_uid"
+        quietly count if gap_prev == 1
+        local adj = r(N)
+        quietly count
+        ml_warn "PID_MULTIPLE_UID" "`r(N)' person_uid con RB030 condiviso; `adj' contigui all'uid precedente (possibile persona spezzata): vedi diag_pid_multiple_uid"
+    }
     restore
 
     * --- panel persona-anno e pesi
