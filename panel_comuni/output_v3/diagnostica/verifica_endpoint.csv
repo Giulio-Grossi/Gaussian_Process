@@ -1,0 +1,17 @@
+url,http_status,content_type,content_length,errore
+https://www.istat.it/storage/cartografia/confini_amministrativi/generalizzati/2025/Limiti01012025_g.zip,200,application/zip,10410520,NA
+https://www.istat.it/storage/codici-unita-amministrative/Variazioni-amministrative-e-territoriali-dal-1991.zip,200,application/zip,227622,NA
+https://www.istat.it/storage/misura-comune/1a-Popolazione-valori-assoluti.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,1944879,NA
+https://www.istat.it/storage/misura-comune/1d-Popolazione-indicatori-struttura.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,4603162,NA
+https://www.istat.it/storage/misura-comune/11-Territorio-e-ambiente.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,3989061,NA
+https://www.istat.it/storage/misura-comune/15c-Infrastrutture-e-mobilita-per-tassi-di-motorizzazione-e-proventi-dalle-sanzioni.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,4058508,NA
+https://www.istat.it/storage/misura-comune/15a-Infrastrutture-e-mobilita-incidenti-stradali.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,3366046,NA
+https://www.istat.it/storage/misura-comune/4-Istruzione.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,4329441,NA
+https://www.istat.it/storage/misura-comune/5-Lavoro.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,3145506,NA
+https://www.istat.it/storage/misura-comune/6-Benessere-economico.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,5837906,NA
+https://www.istat.it/storage/misura-comune/13-Ricerca-innovazione.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,1904926,NA
+https://www.istat.it/storage/misura-comune/12a-Economia-insediata-rapporti-caratteristici.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,2871299,NA
+https://www.istat.it/storage/misura-comune/14-Turismo.xlsx,200,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,7763753,NA
+https://sinacloud.isprambiente.it/arcgisina/rest/services/sina_consumo_suolo/Statistiche_consumo_suolo_2025/FeatureServer/1?f=json,200,application/json;charset=UTF-8,NA,NA
+https://www.catasto-rifiuti.isprambiente.it/get/getDettaglioComunale.csv.php?aa=2010,200,text/csv;charset=UTF-8,NA,NA
+https://www.catasto-rifiuti.isprambiente.it/get/getDettaglioComunale.csv.php?aa=2024,200,text/csv;charset=UTF-8,NA,NA

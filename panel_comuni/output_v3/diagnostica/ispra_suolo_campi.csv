@@ -1,0 +1,25 @@
+name,alias,type,gruppo,anno,al,tipo,fonte_semantica,anno_inizio,anno_alias
+csuolo1_06,CSUOLO1_06,esriFieldTypeDouble,csuolo1,2006,csuolo1_06,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_12,CSUOLO1_12,esriFieldTypeDouble,csuolo1,2012,csuolo1_12,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_15,CSUOLO1_15,esriFieldTypeDouble,csuolo1,2015,csuolo1_15,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_16,CSUOLO1_16,esriFieldTypeDouble,csuolo1,2016,csuolo1_16,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_17,CSUOLO1_17,esriFieldTypeDouble,csuolo1,2017,csuolo1_17,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_18,CSUOLO1_18,esriFieldTypeDouble,csuolo1,2018,csuolo1_18,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_19,CSUOLO1_19,esriFieldTypeDouble,csuolo1,2019,csuolo1_19,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_20,CSUOLO1_20,esriFieldTypeDouble,csuolo1,2020,csuolo1_20,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_21,CSUOLO1_21,esriFieldTypeDouble,csuolo1,2021,csuolo1_21,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_22,CSUOLO1_22,esriFieldTypeDouble,csuolo1,2022,csuolo1_22,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_23,CSUOLO1_23,esriFieldTypeDouble,csuolo1,2023,csuolo1_23,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo1_24,CSUOLO1_24,esriFieldTypeDouble,csuolo1,2024,csuolo1_24,suolo_consumato_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo4_24,CSUOLO4_24,esriFieldTypeDouble,csuolo4,2024,csuolo4_24,suolo_consumato_pct_ispra,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_12,CSUOLO8_12,esriFieldTypeDouble,csuolo8,2012,csuolo8_12,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_15,CSUOLO8_15,esriFieldTypeDouble,csuolo8,2015,csuolo8_15,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_16,CSUOLO8_16,esriFieldTypeDouble,csuolo8,2016,csuolo8_16,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_17,CSUOLO8_17,esriFieldTypeDouble,csuolo8,2017,csuolo8_17,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_18,CSUOLO8_18,esriFieldTypeDouble,csuolo8,2018,csuolo8_18,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_19,CSUOLO8_19,esriFieldTypeDouble,csuolo8,2019,csuolo8_19,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_20,CSUOLO8_20,esriFieldTypeDouble,csuolo8,2020,csuolo8_20,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_21,CSUOLO8_21,esriFieldTypeDouble,csuolo8,2021,csuolo8_21,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_22,CSUOLO8_22,esriFieldTypeDouble,csuolo8,2022,csuolo8_22,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_23,CSUOLO8_23,esriFieldTypeDouble,csuolo8,2023,csuolo8_23,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA
+csuolo8_24,CSUOLO8_24,esriFieldTypeDouble,csuolo8,2024,csuolo8_24,variazione_netta_suolo_ha,CONFIG$soil_field_map (verifica numerica in read_soil),NA,NA

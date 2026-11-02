@@ -1,0 +1,106 @@
+anno,indicatore,n_match,colonna,intestazione,unita_dichiarata,esito,n_non_numerici
+2010,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2010,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2010,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2010,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2010,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2010,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2010,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2011,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2011,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2011,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2011,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2011,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2011,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2011,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2012,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2012,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2012,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2012,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2012,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2012,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2012,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2013,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2013,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2013,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2013,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2013,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2013,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2013,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2014,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2014,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2014,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2014,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2014,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2014,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2014,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2015,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2015,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2015,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2015,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2015,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2015,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2015,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2016,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2016,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2016,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2016,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2016,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2016,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2016,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2017,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2017,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2017,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2017,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2017,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2017,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2017,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2018,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2018,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2018,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2018,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2018,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2018,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2018,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2019,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2019,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2019,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2019,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2019,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2019,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2019,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2020,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2020,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2020,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2020,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2020,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2020,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2020,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2021,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2021,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2021,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2021,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2021,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2021,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2021,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2022,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2022,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2022,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2022,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2022,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2022,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2022,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2023,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2023,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2023,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2023,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2023,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2023,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2023,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2024,popolazione_ispra,1,5,Popolazione,ab,OK,0
+2024,rd_totale_t,1,21,Totale RD (t),t,OK,0
+2024,ru_totale_t,1,24,Totale RU (t),t,OK,0
+2024,indifferenziato_t,1,23,Indifferenziato (t),t,OK,0
+2024,rd_pct_ispra,1,25,Percentuale RD (%),%,OK,0
+2024,ru_procapite_kg,0,NA,ru_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA
+2024,rd_procapite_kg,0,NA,rd_totale_t * 1000 / popolazione_ispra,kg/ab,DERIVATO,NA

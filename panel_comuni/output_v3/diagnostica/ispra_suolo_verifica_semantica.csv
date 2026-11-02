@@ -1,0 +1,13 @@
+campo,verifica,base,quota_coerente,esito
+csuolo4_24,% vs 100*csuolo1_24/area,csuolo1_24,0.9998733535967579,OK
+csuolo8_12,csuolo1_12 - base,csuolo1_06,1,PLURIENNALE 2006-2012: esclusa
+csuolo8_15,csuolo1_15 - base,csuolo1_12,1,PLURIENNALE 2012-2015: esclusa
+csuolo8_16,csuolo1_16 - base,csuolo1_15,1,OK
+csuolo8_17,csuolo1_17 - base,csuolo1_16,1,OK
+csuolo8_18,csuolo1_18 - base,csuolo1_17,1,OK
+csuolo8_19,csuolo1_19 - base,csuolo1_18,1,OK
+csuolo8_20,csuolo1_20 - base,csuolo1_19,1,OK
+csuolo8_21,csuolo1_21 - base,csuolo1_20,1,OK
+csuolo8_22,csuolo1_22 - base,csuolo1_21,1,OK
+csuolo8_23,csuolo1_23 - base,csuolo1_22,1,OK
+csuolo8_24,csuolo1_24 - base,csuolo1__1,1,OK

@@ -1,0 +1,16 @@
+anno,encoding,n_righe_file,riga_intestazione,righe_pre_intestazione,n_campi_intestazione,n_record,n_completi,n_rinvii,n_capofila,n_aggregazioni,n_note,n_anomali,pct_anomali,n_comuni,codice_colonna,codice_metodo,decimale,n_flag_regione,n_duplicati
+2010,UTF-8,8098,2,		Produzione e raccolta differenziata su scala comunale anno 2010 (ISPRA),25,8095,7967,106,21,21,1,0,0,8094,IstatComune,intestazione+contenuto,comma,0,0
+2011,UTF-8,8096,2,		Produzione e raccolta differenziata su scala comunale anno 2011 (ISPRA),25,8093,7789,271,32,32,1,0,0,8092,IstatComune,intestazione+contenuto,comma,0,0
+2012,UTF-8,8096,2,		Produzione e raccolta differenziata su scala comunale anno 2012 (ISPRA),25,8093,6854,1178,60,60,1,0,0,8092,IstatComune,intestazione+contenuto,comma,0,0
+2013,UTF-8,8096,2,		Produzione e raccolta differenziata su scala comunale anno 2013 (ISPRA),25,8093,6951,1092,49,49,1,0,0,8092,IstatComune,intestazione+contenuto,comma,0,0
+2014,UTF-8,8061,2,		Produzione e raccolta differenziata su scala comunale anno 2014 (ISPRA),25,8058,7766,252,39,39,1,0,0,8057,IstatComune,intestazione+contenuto,comma,0,0
+2015,UTF-8,8051,2,		Produzione e raccolta differenziata su scala comunale anno 2015 (ISPRA),25,8048,7765,243,39,39,1,0,0,8047,IstatComune,intestazione+contenuto,comma,0,0
+2016,UTF-8,8002,2,		Produzione e raccolta differenziata su scala comunale anno 2016 (ISPRA),25,7999,7707,247,44,44,1,0,0,7998,IstatComune,intestazione+contenuto,comma,0,0
+2017,UTF-8,7982,2,		Produzione e raccolta differenziata su scala comunale anno 2017 (ISPRA),25,7979,7798,148,32,32,1,0,0,7978,IstatComune,intestazione+contenuto,comma,0,0
+2018,UTF-8,7958,2,		Produzione e raccolta differenziata su scala comunale anno 2018 (ISPRA),25,7955,7771,152,31,31,1,0,0,7954,IstatComune,intestazione+contenuto,comma,0,0
+2019,UTF-8,7918,2,		Produzione e raccolta differenziata su scala comunale anno 2019 (ISPRA),25,7915,7721,161,32,32,1,0,0,7914,IstatComune,intestazione+contenuto,comma,0,0
+2020,UTF-8,7907,2,		Produzione e raccolta differenziata su scala comunale anno 2020 (ISPRA),25,7904,7719,152,32,32,1,0,0,7903,IstatComune,intestazione+contenuto,comma,0,0
+2021,UTF-8,7907,2,		Produzione e raccolta differenziata su scala comunale anno 2021 (ISPRA),25,7904,7709,163,31,31,1,0,0,7903,IstatComune,intestazione+contenuto,comma,0,0
+2022,UTF-8,7908,2,		Produzione e raccolta differenziata su scala comunale anno 2022 (ISPRA),25,7905,7722,155,27,27,1,0,0,7904,IstatComune,intestazione+contenuto,comma,0,0
+2023,UTF-8,7905,2,		Produzione e raccolta differenziata su scala comunale anno 2023 (ISPRA),25,7902,7760,116,25,25,1,0,0,7901,IstatComune,intestazione+contenuto,comma,0,0
+2024,UTF-8,7900,2,		Produzione e raccolta differenziata su scala comunale anno 2024 (ISPRA),25,7897,7762,114,20,20,1,0,0,7896,IstatComune,intestazione+contenuto,comma,0,0

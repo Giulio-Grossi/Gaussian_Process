@@ -1,0 +1,376 @@
+anno,posizione,intestazione,normalizzata
+2010,1,IstatComune,istatcomune
+2010,2,Regione,regione
+2010,3,Provincia,provincia
+2010,4,Comune,comune
+2010,5,Popolazione,popolazione
+2010,6,Dato riferito a,dato riferito a
+2010,7,Frazione umida(1) (t),frazione umida(1) (t)
+2010,8,Verde (t),verde (t)
+2010,9,Carta e cartone (t),carta e cartone (t)
+2010,10,Vetro (t),vetro (t)
+2010,11,Legno (t),legno (t)
+2010,12,Metallo (t),metallo (t)
+2010,13,Plastica (t),plastica (t)
+2010,14,RAEE (t),raee (t)
+2010,15,Tessili (t),tessili (t)
+2010,16,Selettiva (t),selettiva (t)
+2010,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2010,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2010,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2010,20,Altro (t),altro (t)
+2010,21,Totale RD (t),totale rd (t)
+2010,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2010,23,Indifferenziato (t),indifferenziato (t)
+2010,24,Totale RU (t),totale ru (t)
+2010,25,Percentuale RD (%),percentuale rd (%)
+2011,1,IstatComune,istatcomune
+2011,2,Regione,regione
+2011,3,Provincia,provincia
+2011,4,Comune,comune
+2011,5,Popolazione,popolazione
+2011,6,Dato riferito a,dato riferito a
+2011,7,Frazione umida(1) (t),frazione umida(1) (t)
+2011,8,Verde (t),verde (t)
+2011,9,Carta e cartone (t),carta e cartone (t)
+2011,10,Vetro (t),vetro (t)
+2011,11,Legno (t),legno (t)
+2011,12,Metallo (t),metallo (t)
+2011,13,Plastica (t),plastica (t)
+2011,14,RAEE (t),raee (t)
+2011,15,Tessili (t),tessili (t)
+2011,16,Selettiva (t),selettiva (t)
+2011,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2011,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2011,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2011,20,Altro (t),altro (t)
+2011,21,Totale RD (t),totale rd (t)
+2011,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2011,23,Indifferenziato (t),indifferenziato (t)
+2011,24,Totale RU (t),totale ru (t)
+2011,25,Percentuale RD (%),percentuale rd (%)
+2012,1,IstatComune,istatcomune
+2012,2,Regione,regione
+2012,3,Provincia,provincia
+2012,4,Comune,comune
+2012,5,Popolazione,popolazione
+2012,6,Dato riferito a,dato riferito a
+2012,7,Frazione umida(1) (t),frazione umida(1) (t)
+2012,8,Verde (t),verde (t)
+2012,9,Carta e cartone (t),carta e cartone (t)
+2012,10,Vetro (t),vetro (t)
+2012,11,Legno (t),legno (t)
+2012,12,Metallo (t),metallo (t)
+2012,13,Plastica (t),plastica (t)
+2012,14,RAEE (t),raee (t)
+2012,15,Tessili (t),tessili (t)
+2012,16,Selettiva (t),selettiva (t)
+2012,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2012,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2012,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2012,20,Altro (t),altro (t)
+2012,21,Totale RD (t),totale rd (t)
+2012,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2012,23,Indifferenziato (t),indifferenziato (t)
+2012,24,Totale RU (t),totale ru (t)
+2012,25,Percentuale RD (%),percentuale rd (%)
+2013,1,IstatComune,istatcomune
+2013,2,Regione,regione
+2013,3,Provincia,provincia
+2013,4,Comune,comune
+2013,5,Popolazione,popolazione
+2013,6,Dato riferito a,dato riferito a
+2013,7,Frazione umida(1) (t),frazione umida(1) (t)
+2013,8,Verde (t),verde (t)
+2013,9,Carta e cartone (t),carta e cartone (t)
+2013,10,Vetro (t),vetro (t)
+2013,11,Legno (t),legno (t)
+2013,12,Metallo (t),metallo (t)
+2013,13,Plastica (t),plastica (t)
+2013,14,RAEE (t),raee (t)
+2013,15,Tessili (t),tessili (t)
+2013,16,Selettiva (t),selettiva (t)
+2013,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2013,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2013,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2013,20,Altro (t),altro (t)
+2013,21,Totale RD (t),totale rd (t)
+2013,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2013,23,Indifferenziato (t),indifferenziato (t)
+2013,24,Totale RU (t),totale ru (t)
+2013,25,Percentuale RD (%),percentuale rd (%)
+2014,1,IstatComune,istatcomune
+2014,2,Regione,regione
+2014,3,Provincia,provincia
+2014,4,Comune,comune
+2014,5,Popolazione,popolazione
+2014,6,Dato riferito a,dato riferito a
+2014,7,Frazione umida(1) (t),frazione umida(1) (t)
+2014,8,Verde (t),verde (t)
+2014,9,Carta e cartone (t),carta e cartone (t)
+2014,10,Vetro (t),vetro (t)
+2014,11,Legno (t),legno (t)
+2014,12,Metallo (t),metallo (t)
+2014,13,Plastica (t),plastica (t)
+2014,14,RAEE (t),raee (t)
+2014,15,Tessili (t),tessili (t)
+2014,16,Selettiva (t),selettiva (t)
+2014,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2014,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2014,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2014,20,Altro (t),altro (t)
+2014,21,Totale RD (t),totale rd (t)
+2014,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2014,23,Indifferenziato (t),indifferenziato (t)
+2014,24,Totale RU (t),totale ru (t)
+2014,25,Percentuale RD (%),percentuale rd (%)
+2015,1,IstatComune,istatcomune
+2015,2,Regione,regione
+2015,3,Provincia,provincia
+2015,4,Comune,comune
+2015,5,Popolazione,popolazione
+2015,6,Dato riferito a,dato riferito a
+2015,7,Frazione umida(1) (t),frazione umida(1) (t)
+2015,8,Verde (t),verde (t)
+2015,9,Carta e cartone (t),carta e cartone (t)
+2015,10,Vetro (t),vetro (t)
+2015,11,Legno (t),legno (t)
+2015,12,Metallo (t),metallo (t)
+2015,13,Plastica (t),plastica (t)
+2015,14,RAEE (t),raee (t)
+2015,15,Tessili (t),tessili (t)
+2015,16,Selettiva (t),selettiva (t)
+2015,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2015,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2015,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2015,20,Altro (t),altro (t)
+2015,21,Totale RD (t),totale rd (t)
+2015,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2015,23,Indifferenziato (t),indifferenziato (t)
+2015,24,Totale RU (t),totale ru (t)
+2015,25,Percentuale RD (%),percentuale rd (%)
+2016,1,IstatComune,istatcomune
+2016,2,Regione,regione
+2016,3,Provincia,provincia
+2016,4,Comune,comune
+2016,5,Popolazione,popolazione
+2016,6,Dato riferito a,dato riferito a
+2016,7,Frazione umida(1) (t),frazione umida(1) (t)
+2016,8,Verde (t),verde (t)
+2016,9,Carta e cartone (t),carta e cartone (t)
+2016,10,Vetro (t),vetro (t)
+2016,11,Legno (t),legno (t)
+2016,12,Metallo (t),metallo (t)
+2016,13,Plastica (t),plastica (t)
+2016,14,RAEE (t),raee (t)
+2016,15,Tessili (t),tessili (t)
+2016,16,Selettiva (t),selettiva (t)
+2016,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2016,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2016,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2016,20,Altro (t),altro (t)
+2016,21,Totale RD (t),totale rd (t)
+2016,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2016,23,Indifferenziato (t),indifferenziato (t)
+2016,24,Totale RU (t),totale ru (t)
+2016,25,Percentuale RD (%),percentuale rd (%)
+2017,1,IstatComune,istatcomune
+2017,2,Regione,regione
+2017,3,Provincia,provincia
+2017,4,Comune,comune
+2017,5,Popolazione,popolazione
+2017,6,Dato riferito a,dato riferito a
+2017,7,Frazione umida(1) (t),frazione umida(1) (t)
+2017,8,Verde (t),verde (t)
+2017,9,Carta e cartone (t),carta e cartone (t)
+2017,10,Vetro (t),vetro (t)
+2017,11,Legno (t),legno (t)
+2017,12,Metallo (t),metallo (t)
+2017,13,Plastica (t),plastica (t)
+2017,14,RAEE (t),raee (t)
+2017,15,Tessili (t),tessili (t)
+2017,16,Selettiva (t),selettiva (t)
+2017,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2017,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2017,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2017,20,Altro (t),altro (t)
+2017,21,Totale RD (t),totale rd (t)
+2017,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2017,23,Indifferenziato (t),indifferenziato (t)
+2017,24,Totale RU (t),totale ru (t)
+2017,25,Percentuale RD (%),percentuale rd (%)
+2018,1,IstatComune,istatcomune
+2018,2,Regione,regione
+2018,3,Provincia,provincia
+2018,4,Comune,comune
+2018,5,Popolazione,popolazione
+2018,6,Dato riferito a,dato riferito a
+2018,7,Frazione umida(1) (t),frazione umida(1) (t)
+2018,8,Verde (t),verde (t)
+2018,9,Carta e cartone (t),carta e cartone (t)
+2018,10,Vetro (t),vetro (t)
+2018,11,Legno (t),legno (t)
+2018,12,Metallo (t),metallo (t)
+2018,13,Plastica (t),plastica (t)
+2018,14,RAEE (t),raee (t)
+2018,15,Tessili (t),tessili (t)
+2018,16,Selettiva (t),selettiva (t)
+2018,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2018,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2018,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2018,20,Altro (t),altro (t)
+2018,21,Totale RD (t),totale rd (t)
+2018,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2018,23,Indifferenziato (t),indifferenziato (t)
+2018,24,Totale RU (t),totale ru (t)
+2018,25,Percentuale RD (%),percentuale rd (%)
+2019,1,IstatComune,istatcomune
+2019,2,Regione,regione
+2019,3,Provincia,provincia
+2019,4,Comune,comune
+2019,5,Popolazione,popolazione
+2019,6,Dato riferito a,dato riferito a
+2019,7,Frazione umida(1) (t),frazione umida(1) (t)
+2019,8,Verde (t),verde (t)
+2019,9,Carta e cartone (t),carta e cartone (t)
+2019,10,Vetro (t),vetro (t)
+2019,11,Legno (t),legno (t)
+2019,12,Metallo (t),metallo (t)
+2019,13,Plastica (t),plastica (t)
+2019,14,RAEE (t),raee (t)
+2019,15,Tessili (t),tessili (t)
+2019,16,Selettiva (t),selettiva (t)
+2019,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2019,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2019,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2019,20,Altro (t),altro (t)
+2019,21,Totale RD (t),totale rd (t)
+2019,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2019,23,Indifferenziato (t),indifferenziato (t)
+2019,24,Totale RU (t),totale ru (t)
+2019,25,Percentuale RD (%),percentuale rd (%)
+2020,1,IstatComune,istatcomune
+2020,2,Regione,regione
+2020,3,Provincia,provincia
+2020,4,Comune,comune
+2020,5,Popolazione,popolazione
+2020,6,Dato riferito a,dato riferito a
+2020,7,Frazione umida(1) (t),frazione umida(1) (t)
+2020,8,Verde (t),verde (t)
+2020,9,Carta e cartone (t),carta e cartone (t)
+2020,10,Vetro (t),vetro (t)
+2020,11,Legno (t),legno (t)
+2020,12,Metallo (t),metallo (t)
+2020,13,Plastica (t),plastica (t)
+2020,14,RAEE (t),raee (t)
+2020,15,Tessili (t),tessili (t)
+2020,16,Selettiva (t),selettiva (t)
+2020,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2020,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2020,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2020,20,Altro (t),altro (t)
+2020,21,Totale RD (t),totale rd (t)
+2020,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2020,23,Indifferenziato (t),indifferenziato (t)
+2020,24,Totale RU (t),totale ru (t)
+2020,25,Percentuale RD (%),percentuale rd (%)
+2021,1,IstatComune,istatcomune
+2021,2,Regione,regione
+2021,3,Provincia,provincia
+2021,4,Comune,comune
+2021,5,Popolazione,popolazione
+2021,6,Dato riferito a,dato riferito a
+2021,7,Frazione umida(1) (t),frazione umida(1) (t)
+2021,8,Verde (t),verde (t)
+2021,9,Carta e cartone (t),carta e cartone (t)
+2021,10,Vetro (t),vetro (t)
+2021,11,Legno (t),legno (t)
+2021,12,Metallo (t),metallo (t)
+2021,13,Plastica (t),plastica (t)
+2021,14,RAEE (t),raee (t)
+2021,15,Tessili (t),tessili (t)
+2021,16,Selettiva (t),selettiva (t)
+2021,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2021,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2021,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2021,20,Altro (t),altro (t)
+2021,21,Totale RD (t),totale rd (t)
+2021,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2021,23,Indifferenziato (t),indifferenziato (t)
+2021,24,Totale RU (t),totale ru (t)
+2021,25,Percentuale RD (%),percentuale rd (%)
+2022,1,IstatComune,istatcomune
+2022,2,Regione,regione
+2022,3,Provincia,provincia
+2022,4,Comune,comune
+2022,5,Popolazione,popolazione
+2022,6,Dato riferito a,dato riferito a
+2022,7,Frazione umida(1) (t),frazione umida(1) (t)
+2022,8,Verde (t),verde (t)
+2022,9,Carta e cartone (t),carta e cartone (t)
+2022,10,Vetro (t),vetro (t)
+2022,11,Legno (t),legno (t)
+2022,12,Metallo (t),metallo (t)
+2022,13,Plastica (t),plastica (t)
+2022,14,RAEE (t),raee (t)
+2022,15,Tessili (t),tessili (t)
+2022,16,Selettiva (t),selettiva (t)
+2022,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2022,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2022,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2022,20,Altro (t),altro (t)
+2022,21,Totale RD (t),totale rd (t)
+2022,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2022,23,Indifferenziato (t),indifferenziato (t)
+2022,24,Totale RU (t),totale ru (t)
+2022,25,Percentuale RD (%),percentuale rd (%)
+2023,1,IstatComune,istatcomune
+2023,2,Regione,regione
+2023,3,Provincia,provincia
+2023,4,Comune,comune
+2023,5,Popolazione,popolazione
+2023,6,Dato riferito a,dato riferito a
+2023,7,Frazione umida(1) (t),frazione umida(1) (t)
+2023,8,Verde (t),verde (t)
+2023,9,Carta e cartone (t),carta e cartone (t)
+2023,10,Vetro (t),vetro (t)
+2023,11,Legno (t),legno (t)
+2023,12,Metallo (t),metallo (t)
+2023,13,Plastica (t),plastica (t)
+2023,14,RAEE (t),raee (t)
+2023,15,Tessili (t),tessili (t)
+2023,16,Selettiva (t),selettiva (t)
+2023,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2023,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2023,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2023,20,Altro (t),altro (t)
+2023,21,Totale RD (t),totale rd (t)
+2023,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2023,23,Indifferenziato (t),indifferenziato (t)
+2023,24,Totale RU (t),totale ru (t)
+2023,25,Percentuale RD (%),percentuale rd (%)
+2024,1,IstatComune,istatcomune
+2024,2,Regione,regione
+2024,3,Provincia,provincia
+2024,4,Comune,comune
+2024,5,Popolazione,popolazione
+2024,6,Dato riferito a,dato riferito a
+2024,7,Frazione umida(1) (t),frazione umida(1) (t)
+2024,8,Verde (t),verde (t)
+2024,9,Carta e cartone (t),carta e cartone (t)
+2024,10,Vetro (t),vetro (t)
+2024,11,Legno (t),legno (t)
+2024,12,Metallo (t),metallo (t)
+2024,13,Plastica (t),plastica (t)
+2024,14,RAEE (t),raee (t)
+2024,15,Tessili (t),tessili (t)
+2024,16,Selettiva (t),selettiva (t)
+2024,17,Rifiuti da C e D (t),rifiuti da c e d (t)
+2024,18,Pulizia stradale a recupero (t),pulizia stradale a recupero (t)
+2024,19,Ingombranti misti a recupero (t),ingombranti misti a recupero (t)
+2024,20,Altro (t),altro (t)
+2024,21,Totale RD (t),totale rd (t)
+2024,22,Ingombranti a smaltimento (t),ingombranti a smaltimento (t)
+2024,23,Indifferenziato (t),indifferenziato (t)
+2024,24,Totale RU (t),totale ru (t)
+2024,25,Percentuale RD (%),percentuale rd (%)

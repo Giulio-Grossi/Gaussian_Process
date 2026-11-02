@@ -1,0 +1,8 @@
+tema,fonte,url_da_verificare,granularita_attesa,annualita_attesa,stato,nota
+Rinnovabili,GSE Atlaimpianti / open data,https://atla.gse.it/atlaimpianti/ ; https://www.gse.it/dati-e-scenari,impianto -> comune (da verificare),stock corrente,NON INTEGRATA,verificare export comunale storico; non usare dati provinciali
+Rischio idrogeologico,ISPRA IdroGEO,https://idrogeo.isprambiente.it,comunale,edizioni (non annuale),NON INTEGRATA,"attribuire per edizione, MAI replicare su anni"
+Aree protette,MASE EUAP + Natura 2000,https://www.mase.gov.it ; https://www.eea.europa.eu (Natura 2000),poligoni -> overlay comuni,release (EUAP statico),NON INTEGRATA,calcolo % area comunale con sf::st_intersection
+Parco veicolare,ACI Autoritratto,https://www.aci.it/laci/studi-e-ricerche/dati-e-statistiche/autoritratto.html,comunale (da verificare),annuale,NON INTEGRATA,ISTAT AMdC gia include motorizzazione e pre-Euro4 da fonte ACI
+Ambiente urbano,ISTAT Dati ambientali nelle citta,https://www.istat.it,solo capoluoghi,annuale,ESCLUSA,non copre tutti i comuni
+Verde urbano,ISPRA/ISTAT verde urbano,https://www.istat.it,solo capoluoghi,annuale,ESCLUSA,non copre tutti i comuni
+Altre tavole ISTAT,ISTAT A misura di Comune,output_v3/diagnostica/catalogo_tavole_istat.csv,comunale se copertura_nazionale=TRUE,vedi catalogo,DA SELEZIONARE,aggiungere a SPEC_ISTAT con unita e polarita
