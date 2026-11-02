@@ -991,7 +991,7 @@ qc_panel <- function(panel, base, spec, L, extra = list()) {
       add_qc('percentuale in [0,100]', id, if (n_out) 'FAIL' else 'OK', n_out)
       if (max(x, na.rm = TRUE) <= 1) add_qc('scala percentuale', id, 'WARN', NA, 'max <= 1: possibile proporzione 0-1')
       if (n_out) rng[[id]] <- panel[!is.na(x) & (x < 0 | x > 100), c('codice_istat', 'anno', id)] |> rename(valore = 3) |> mutate(indicatore = id)
-    } else if (u %in% c('t', 'ha', 'kg/ab/anno', 'abitanti', 'euro', 'ha/anno')) {
+    } else if (u %in% c('t', 'ha', 'kg/ab/anno', 'abitanti', 'euro')) {   # ha/anno = variazione netta: puo essere < 0
       n_neg <- sum(x < 0, na.rm = TRUE)
       add_qc('non negativita', id, if (n_neg) 'FAIL' else 'OK', n_neg)
     }
