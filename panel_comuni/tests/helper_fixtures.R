@@ -1,21 +1,24 @@
-# Fixture SINTETICHE per test offline. Struttura ISPRA ricostruita dai sintomi riportati
-# (25 intestazioni / 26 campi, ';' finale, righe 'Vedi aggregazione', codici 8 cifre).
-# NON sono dati reali.
+# Fixture SINTETICHE per test offline. Struttura ISPRA = quella REALE osservata il 02/11/2026
+# su getDettaglioComunale.csv.php?aa=2010..2024 (stessa intestazione tutti gli anni):
+# riga titolo con tab, 25 intestazioni, righe dati con tab iniziali e ';' finale (26 campi),
+# 'Dato riferito a' = Comune | Aggregazione: X (capofila, valori = totale aggregazione) |
+# Vedi aggregazione: X (21 campi, '-'), nota finale. Valori NON reali.
 
-ISPRA_HEADER <- c('Istat', 'Regione', 'Provincia', 'Comune', 'Popolazione', 'Frazione organica (t)',
-  'Carta e cartone (t)', 'Vetro (t)', 'Plastica (t)', 'Metallo (t)', 'Legno (t)', 'RAEE (t)', 'Tessili (t)',
-  'Selettiva (t)', 'Ingombranti a recupero (t)', 'Altro RD (t)', 'Totale RD (t)', 'Indifferenziato (t)',
-  'Spazzamento (t)', 'Ingombranti misti (t)', 'Totale RU (t)', 'Percentuale RD (%)',
-  'RD pro capite (kg/ab.*anno)', 'RU pro capite (kg/ab.*anno)', 'Note')   # 25 nomi
+ISPRA_HEADER <- c('IstatComune', 'Regione', 'Provincia', 'Comune', 'Popolazione', 'Dato riferito a',
+  'Frazione umida(1) (t)', 'Verde (t)', ' Carta e cartone (t)', 'Vetro (t)', 'Legno (t)', 'Metallo (t)', 'Plastica (t)',
+  'RAEE (t)', 'Tessili (t)', 'Selettiva (t)', 'Rifiuti da C e D (t)', 'Pulizia stradale a recupero (t)',
+  'Ingombranti misti a recupero (t)', 'Altro (t)', 'Totale RD (t)', 'Ingombranti a smaltimento (t)',
+  'Indifferenziato (t)', 'Totale RU (t)', 'Percentuale RD (%)')   # 25 nomi
 
-fmt_it <- function(x, d = 2) formatC(x, format = 'f', digits = d, big.mark = '.', decimal.mark = ',')
+fmt_it <- function(x, d = 3) formatC(formatC(x, format = 'f', digits = d, big.mark = '.', decimal.mark = ','), width = 20)
 
-ispra_row <- function(code8, reg, prov, com, pop, rd, ru) {
-  frac <- fmt_it(rep(rd / 11, 11), 3)
-  paste0(paste(c(code8, reg, prov, com, pop, frac, fmt_it(rd, 3), fmt_it(ru - rd, 3), '0', '0',
-                 fmt_it(ru, 3), fmt_it(100 * rd / ru, 2), fmt_it(rd * 1000 / pop, 2), fmt_it(ru * 1000 / pop, 2), ''),
-               collapse = ';'), ';')   # ';' finale -> 26 campi
+ispra_row <- function(code8, reg, prov, com, pop, rd, ru, rif = 'Comune') {
+  paste0('\t\t\t\t', paste(c(code8, reg, prov, com, pop, rif, fmt_it(rep(rd / 14, 14)), fmt_it(rd), '-',
+                              fmt_it(ru - rd), fmt_it(ru), paste0('  ', fmt_it(100 * rd / ru, 2) |> trimws(), '%'), ''),
+                            collapse = ';'))   # ';' finale -> 26 campi
 }
+ispra_rinvio <- function(code8, reg, prov, com, pop, agg)
+  paste0('\t\t\t\t', paste(c(code8, reg, prov, com, pop, paste('Vedi aggregazione:', agg), rep('-', 15)), collapse = ';'))   # 21 campi
 
 # comuni sintetici: prov 001 (reg 01 Piemonte) e 007 (reg 02 Valle d'Aosta)
 synthetic_comuni <- function() {
@@ -25,33 +28,34 @@ synthetic_comuni <- function() {
 }
 
 write_ispra_csv <- function(path, year, comuni, extra = TRUE) {
-  set.seed(year)
-  L <- c(paste('Catasto rifiuti - dettaglio comunale anno', year), paste(ISPRA_HEADER, collapse = ';'))
+  L <- c(paste0('\t\tProduzione e raccolta differenziata su scala comunale anno ', year, ' (ISPRA)'), paste(ISPRA_HEADER, collapse = ';'))
   for (i in seq_len(nrow(comuni))) {
     c6 <- comuni$codice_istat[i]; reg <- comuni$cod_reg[i]
     if (year < 2023 && c6 == '007012') next                        # comune istituito nel 2023
     if (year == 2022 && c6 == '001013') next                       # nel 2022 ha ancora il vecchio codice 099001
-    if (c6 == '007004') {                                           # rinvio aggregazione su 2 righe fisiche
-      L <- c(L, paste0('02007004;Valle d\'Aosta;Aosta;ARNAD;1228;'), 'Vedi aggregazione: EVANCON-MONT CERVIN;-;-;-;')
-      next
-    }
-    code8 <- paste0(reg, c6); if (reg == '01' && i %% 2 == 0) code8 <- sub('^0', '', code8)  # zero perso
     regn <- if (reg == '01') 'Piemonte' else "Valle d'Aosta"
     prov <- if (reg == '01') 'Torino' else 'Aosta'
+    if (c6 == '007004') {                                           # rinvio spezzato su 2 righe fisiche
+      L <- c(L, "\t\t\t\t02007004;Valle d'Aosta;Aosta;ARNAD;1228;", 'Vedi aggregazione: EVANCON-MONT CERVIN;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-')
+      next
+    }
+    if (c6 == '007006') { L <- c(L, ispra_rinvio('02007006', regn, prov, 'VALLE 6', 303, 'EVANCON-MONT CERVIN')); next }
+    if (c6 == '007002') { L <- c(L, ispra_row('02007002', regn, prov, "ANTEY-SAINT-ANDRE'", 553, 13617.735, 17968.935,
+                                              rif = 'Aggregazione: EVANCON-MONT CERVIN')); next }   # capofila = totale
+    code8 <- paste0(reg, c6); if (reg == '01' && i %% 2 == 0) code8 <- sub('^0', '', code8)  # zero perso
     pop <- 1000 + 37 * i; ru <- pop * 0.5; rd <- ru * (0.4 + 0.02 * i)
-    if (c6 == '001005') ru <- NA
-    row <- ispra_row(code8, regn, prov, toupper(comuni$comune[i]), pop, rd, ifelse(is.na(ru), pop * 0.5, ru))
-    if (c6 == '001005') { f <- strsplit(row, ';', fixed = TRUE)[[1]]; f[21] <- '-'; row <- paste0(paste(f, collapse = ';'), ';') }   # RU '-' -> NA
+    row <- ispra_row(code8, regn, prov, toupper(comuni$comune[i]), pop, rd, ru)
+    if (c6 == '001005') { f <- strsplit(row, ';', fixed = TRUE)[[1]]; f[24] <- '-'; row <- paste(f, collapse = ';') }   # RU '-' -> NA
     L <- c(L, row)
   }
   if (extra) {
-    L <- c(L, ispra_row('', "Valle d'Aosta", 'Aosta', 'EVANCON-MONT CERVIN', 9000, 3000, 4500))   # aggregato
-    L <- c(L, '01001003;Piemonte;Torino;COMUNE 3;1111;riga troncata;1;2')                           # anomala
+    L <- c(L, '\t\t\t\t01001003;Piemonte;Torino;COMUNE 3;1111;Comune;riga troncata;1;2')                   # anomala
     if (year == 2022) L <- c(L, ispra_row('01001099', 'Piemonte', 'Torino', 'SOPPRESSO', 500, 100, 250))
     if (year == 2022) L <- c(L, ispra_row('01099001', 'Piemonte', 'Torino', 'COMUNE 13', 900, 100, 250))  # vecchio codice (AP)
     L <- c(L, L[3])                                                  # duplicato identico
+    L <- c(L, '', 'Note: (1) incluso il quantitativo avviato a compostaggio domestico')
   }
-  txt <- iconv(paste(L, collapse = '\r\n'), 'UTF-8', 'CP1252')       # file in Windows-1252
+  txt <- iconv(paste(L, collapse = '\r\n'), 'UTF-8', 'CP1252')       # CP1252 per robustezza (reale: ASCII)
   writeBin(charToRaw(txt), path)
   invisible(path)
 }

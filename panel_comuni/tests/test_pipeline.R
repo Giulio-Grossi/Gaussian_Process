@@ -1,6 +1,14 @@
 # Test automatici. Esecuzione: Rscript tests/run_tests.R  (dalla cartella dello script)
 library(testthat)
 
+test_that('validate_file: binari ZIP/XLSX in locale UTF-8 (regressione invalid multibyte)', {
+  f <- tempfile(fileext = '.bin'); writeBin(as.raw(c(0x50, 0x4b, 0x03, 0x04, 0xff, 0xfe, 0xc3, 0x28, 0x80:0xff)), f)
+  expect_no_error(v <- validate_file(f, 'zip', 10))
+  expect_match(v, 'ZIP')
+  h <- tempfile(fileext = '.csv'); writeBin(c(as.raw(0xe8), charToRaw('<html><body>errore</body></html>')), h)
+  expect_match(validate_file(h, 'csv', 5), 'HTML')
+})
+
 test_that('code6: formati ISTAT e ISPRA 8 cifre', {
   expect_equal(code6(c('1001', '001001', 1001, '1001.0', ' 001001 ')), rep('001001', 5))
   expect_equal(code6(c('02007004', '2007004', '"02007004"'), allow8 = TRUE), rep('007004', 3))
@@ -29,28 +37,38 @@ test_that('regioni: codice da nome', {
                c('02', '02', '04', '08', NA))
 })
 
-test_that('parser ISPRA: righe problematiche conservate, aggregazioni non attribuite', {
-  td <- withr_tmp <- tempfile(); dir.create(td)
+test_that('parser ISPRA (struttura reale): capofila, rinvii, nota, pro capite derivato', {
+  td <- tempfile(); dir.create(td)
   cm <- synthetic_comuni(); p <- file.path(td, 'r.csv'); write_ispra_csv(p, 2024, cm)
-  x <- parse_ispra_rifiuti(p, 2024)
-  expect_equal(x$meta$n_campi_intestazione, 25L)
-  expect_equal(x$meta$encoding, 'CP1252')
-  # nessun record perso: completi + rinvii + aggregazioni + anomali = record
-  expect_equal(x$meta$n_record, x$meta$n_completi + x$meta$n_rinvii + x$meta$n_aggregazioni + x$meta$n_anomali)
-  expect_equal(x$meta$n_rinvii, 1L); expect_equal(x$meta$n_aggregazioni, 1L); expect_equal(x$meta$n_anomali, 1L)
+  x <- parse_ispra_rifiuti(p, 2024); m <- x$meta
+  expect_equal(m$n_campi_intestazione, 25L); expect_equal(m$encoding, 'CP1252'); expect_equal(m$codice_colonna, 'IstatComune')
+  # nessun record perso
+  expect_equal(m$n_record, m$n_completi + m$n_rinvii + m$n_capofila + m$n_note + m$n_anomali)
+  expect_equal(c(m$n_rinvii, m$n_capofila, m$n_note, m$n_anomali), c(2L, 1L, 1L, 1L))
+  expect_equal(m$pct_anomali, 100 / (m$n_record - 1))                      # nota esclusa dal denominatore
   ar <- x$comuni[x$comuni$codice_istat == '007004', ]
   expect_equal(ar$tipo_record, 'rinvio_aggregazione'); expect_equal(ar$aggregazione, 'EVANCON-MONT CERVIN')
-  expect_true(all(is.na(unlist(ar[WASTE_MEAS$id]))))                       # valore aggregato NON attribuito
-  expect_equal(x$aggregazioni$comune_fonte, 'EVANCON-MONT CERVIN')
-  expect_equal(x$aggregazioni$ru_totale_t, 4500)                           # aggregato conservato
+  expect_equal(ar$popolazione_ispra, 1228)                                  # popolazione resta comunale
+  expect_true(all(is.na(unlist(ar[setdiff(WASTE_MEAS$id, 'popolazione_ispra')]))))
+  cf <- x$comuni[x$comuni$codice_istat == '007002', ]                       # capofila: totale NON attribuito
+  expect_equal(cf$tipo_record, 'capofila_aggregazione'); expect_true(is.na(cf$ru_totale_t)); expect_equal(cf$popolazione_ispra, 553)
+  ag <- x$aggregazioni
+  expect_equal(nrow(ag), 1L); expect_equal(ag$aggregazione, 'EVANCON-MONT CERVIN'); expect_equal(ag$capofila_codice, '007002')
+  expect_equal(ag$ru_totale_t, 17968.935); expect_equal(ag$n_comuni_membri, 3L); expect_equal(ag$popolazione_membri, 553 + 1228 + 303)
+  expect_equal(ag$ru_procapite_kg, 17968.935 * 1000 / (553 + 1228 + 303))   # pro capite su popolazione membri
+  expect_setequal(x$membri$codice_istat, c('007002', '007004', '007006'))
   expect_true('001002' %in% x$comuni$codice_istat)                         # 7 cifre (zero perso) recuperato
-  expect_equal(sum(x$comuni$codice_istat == '001001'), 1L)                 # duplicato identico collassato
+  expect_equal(sum(x$comuni$codice_istat == '001001'), 1L)
   expect_true(x$comuni$flag_duplicato[x$comuni$codice_istat == '001001'])
   r1 <- x$comuni[x$comuni$codice_istat == '001001', ]
-  expect_equal(r1$ru_totale_t, 0.5 * 1037, tolerance = 1e-3)                # 518,500 italiano
-  expect_true(is.na(x$comuni$ru_totale_t[x$comuni$codice_istat == '001005']))   # '-' -> NA, non 0
-  expect_true(all(x$colmap$esito == 'OK'))
-  expect_equal(x$colmap$colonna[x$colmap$indicatore == 'rd_pct_ispra'], 22L)
+  expect_equal(r1$ru_totale_t, 0.5 * 1037, tolerance = 1e-3)
+  expect_equal(r1$rd_pct_ispra, 42, tolerance = 1e-6)                       # '  42,00%'
+  expect_equal(r1$ru_procapite_kg, 500, tolerance = 1e-6)                   # derivato
+  expect_true(is.na(x$comuni$ru_totale_t[x$comuni$codice_istat == '001005']))
+  cm2 <- x$colmap
+  expect_equal(cm2$esito[cm2$indicatore %in% c('ru_procapite_kg', 'rd_procapite_kg')], c('DERIVATO', 'DERIVATO'))
+  expect_true(all(cm2$esito[!cm2$indicatore %in% c('ru_procapite_kg', 'rd_procapite_kg')] == 'OK'))
+  expect_equal(cm2$colonna[cm2$indicatore == 'rd_pct_ispra'], 25L)
   expect_true(any(grepl('riga troncata', x$anomalie$testo)))
   expect_false(any(x$comuni$flag_regione))
 })
@@ -82,8 +100,9 @@ test_that('ISTAT: totale per sesso selezionato, codici numerici, anni extra', {
 test_that('soil: semantica solo da alias, incrementi pluriennali riconosciuti', {
   fl <- tibble::tibble(name = c('csuolo1_22', 'csuolo2_22', 'csuolo8_22', 'csuolo8_15', 'csuolo9_22'),
                        alias = c('Suolo consumato 2022 [ha]', 'Suolo consumato 2022 [%]', 'Incremento 2021-2022 [ha]', 'Incremento 2012-2015 [ha]', 'boh'))
+  old <- CONFIG$soil_field_map; CONFIG$soil_field_map <<- NULL; on.exit(CONFIG$soil_field_map <<- old)
   c <- classify_soil_fields(fl)
-  expect_equal(c$tipo, c('suolo_consumato_ha', 'suolo_consumato_pct_ispra', 'incremento_suolo_ha', 'incremento_suolo_ha', NA))
+  expect_equal(c$tipo, c('suolo_consumato_ha', 'suolo_consumato_pct_ispra', 'variazione_netta_suolo_ha', 'variazione_netta_suolo_ha', NA))
   expect_equal(c$anno_inizio[3:4], c(2021L, 2012L))
 })
 
@@ -131,7 +150,7 @@ test_that('pipeline completa offline su fixture sintetiche', {
   old <- CONFIG
   on.exit(CONFIG <<- old, add = TRUE)
   CONFIG$n_min_comuni <<- 10L; CONFIG$waste_years <<- 2022:2024; CONFIG$do_soil <<- FALSE
-  CONFIG$do_verifica <<- FALSE; CONFIG$max_anomalie_pct <<- 10; CONFIG$min_bytes <<- list(geo = 100, xlsx = 100, csv = 100, var = 100)
+  CONFIG$do_verifica <<- FALSE; CONFIG$offline <<- TRUE; CONFIG$max_anomalie_pct <<- 10; CONFIG$min_bytes <<- list(geo = 100, xlsx = 100, csv = 100, var = 100)
   res <- suppressMessages(run_pipeline(root))
   out <- file.path(root, 'output_v3'); P <- res$panel
   expect_equal(nrow(P), 25 * length(unique(P$anno)))
@@ -141,6 +160,8 @@ test_that('pipeline completa offline su fixture sintetiche', {
   # aggregazione: ARNAD senza valori, stato annotato
   ar <- P[P$codice_istat == '007004' & P$anno == 2024, ]
   expect_equal(ar$rifiuti_stato, 'in_aggregazione'); expect_true(is.na(ar$ru_totale_t))
+  cf <- P[P$codice_istat == '007002' & P$anno == 2024, ]
+  expect_equal(cf$rifiuti_stato, 'capofila_aggregazione'); expect_true(is.na(cf$ru_totale_t)); expect_true(is.na(cf$ru_procapite_kg))
   # ricodifica 1:1 (AP): vecchio 099001 -> 001013 nel 2022
   expect_true(P$rifiuti_ricodificato[P$codice_istat == '001013' & P$anno == 2022])
   # comune istituito 2023: non esistente 2022 per fonte anno_corrente

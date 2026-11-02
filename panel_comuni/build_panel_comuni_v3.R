@@ -23,10 +23,14 @@ CONFIG <- list(
   do_catalogo    = TRUE,               # catalogo tavole ISTAT scaricate (per estensioni)
   do_verifica    = TRUE,               # verifica endpoint a inizio run
   redownload     = FALSE,              # TRUE = ignora cache raw/
+  offline        = FALSE,              # TRUE = usa solo raw/, nessun download (test)
   n_min_comuni   = 6500L,              # soglia copertura "nazionale"
   max_anomalie_pct = 2,                # % max righe CSV ISPRA non interpretabili per anno
   cov_soglia     = 0.90,               # copertura minima per "indicatore pienamente disponibile"
-  soil_field_map = NULL,               # override: list(suolo_consumato_ha='csuolo1', ...)
+  # Alias ArcGIS non informativi (CSUOLO1_06...). Semantica verificata il 02/11/2026 su Milano/Torino/Roma/Arnad
+  # e RIVERIFICATA numericamente a ogni run (read_soil): csuolo1 = ha consumati; csuolo4 = % (solo 2024);
+  # csuolo8 = variazione netta ha vs anno disponibile precedente (2024 vs 2023 rivisto 'csuolo1__1').
+  soil_field_map = list(suolo_consumato_ha = 'csuolo1', suolo_consumato_pct_ispra = 'csuolo4', variazione_netta_suolo_ha = 'csuolo8'),
   min_bytes      = list(geo = 100000, xlsx = 1000, csv = 10000, var = 10000),
   user_agent     = 'panel-comuni-sostenibilita/3.0 (ricerca; R httr2)'
 )
@@ -186,7 +190,8 @@ validate_file <- function(path, kind, min_bytes = 1000) {
   if (!file.exists(path)) return('file assente')
   if (file.size(path) < min_bytes) return(paste0('file troppo piccolo (', file.size(path), ' byte)'))
   b <- sniff(path)
-  head_txt <- tolower(rawToChar(b[b != as.raw(0)]))
+  # testo solo per controlli CSV/JSON; byte grezzi, nessuna conversione multibyte
+  head_txt <- rawToChar(b[b != as.raw(0)]); Encoding(head_txt) <- 'bytes'
   if (kind %in% c('zip', 'xlsx')) {
     if (length(b) < 2 || !identical(b[1:2], charToRaw('PK'))) return('non e un archivio ZIP/XLSX')
     z <- tryCatch(utils::unzip(path, list = TRUE), error = function(e) NULL)
@@ -194,8 +199,8 @@ validate_file <- function(path, kind, min_bytes = 1000) {
     if (kind == 'xlsx' && !any(z$Name == 'xl/workbook.xml')) return('XLSX privo di workbook')
   }
   if (kind %in% c('csv', 'json')) {
-    if (grepl('<html|<!doctype|<head', head_txt)) return('contenuto HTML, non dati')
-    if (kind == 'csv' && !grepl(';|,', head_txt)) return('CSV senza separatori riconoscibili')
+    if (grepl('<html|<!doctype|<head', head_txt, ignore.case = TRUE, useBytes = TRUE)) return('contenuto HTML, non dati')
+    if (kind == 'csv' && !grepl(';|,', head_txt, useBytes = TRUE)) return('CSV senza separatori riconoscibili')
   }
   'OK'
 }
@@ -218,6 +223,7 @@ fetch <- function(url, dest, kind = 'zip', min_bytes = 1000) {
     if (v == 'OK') { log_download(url, dest, 'OK', cache = TRUE, bytes = file.size(dest)); return(dest) }
     logmsg('Cache non valida (', v, '): riscarico ', basename(dest))
   }
+  if (isTRUE(CONFIG$offline)) { log_download(url, dest, 'ERRORE offline: file non in cache'); stop('Modalita offline: file non in cache: ', basename(dest)) }
   logmsg('Download: ', url)
   tmp <- paste0(dest, '.part'); unlink(tmp)
   resp <- tryCatch(httr2::req_perform(http_req(url), path = tmp),
@@ -301,16 +307,16 @@ SPEC_ISTAT <- tribble(
 
 SPEC_EXTRA <- tribble(
   ~indicatore, ~fonte, ~campo, ~anni_teorici, ~dimensione, ~unita, ~polarita, ~descrizione, ~geografia, ~in_completezza,
-  'suolo_consumato_ha',   'ISPRA Consumo di suolo (ArcGIS)', 'csuolo*_YY (alias)', c(2006L, 2012L, 2015:2024), 'ambientale', 'ha', '-', 'Suolo consumato', 'armonizzata_2024', TRUE,
-  'suolo_consumato_pct_ispra','ISPRA Consumo di suolo (ArcGIS)', 'csuolo*_YY (alias %)', c(2006L, 2012L, 2015:2024), 'ambientale', '%', '-', 'Suolo consumato su superficie comunale', 'armonizzata_2024', TRUE,
-  'incremento_suolo_ha',  'ISPRA Consumo di suolo (ArcGIS)', 'csuolo*_YY (alias incremento)', 2016:2024, 'ambientale', 'ha/anno', '-', 'Incremento annuale suolo consumato (solo periodi di 1 anno)', 'armonizzata_2024', TRUE,
+  'suolo_consumato_ha',   'ISPRA Consumo di suolo (ArcGIS)', 'csuolo1_YY', c(2006L, 2012L, 2015:2024), 'ambientale', 'ha', '-', 'Suolo consumato', 'armonizzata_2024', TRUE,
+  'suolo_consumato_pct_ispra','ISPRA Consumo di suolo (ArcGIS)', 'csuolo4_YY', 2024L, 'ambientale', '%', '-', 'Suolo consumato su superficie comunale', 'armonizzata_2024', TRUE,
+  'variazione_netta_suolo_ha',  'ISPRA Consumo di suolo (ArcGIS)', 'csuolo8_YY', 2016:2024, 'ambientale', 'ha/anno', '-', 'Variazione netta annua suolo consumato (puo essere negativa; 2024 rispetto al 2023 rivisto)', 'armonizzata_2024', TRUE,
   'popolazione_ispra',    'ISPRA Catasto rifiuti', 'Popolazione', 2010:2024, 'demografica', 'abitanti', 'contesto', 'Popolazione usata da ISPRA (ausiliaria, controlli pro capite)', 'anno_corrente', FALSE,
   'ru_totale_t',          'ISPRA Catasto rifiuti', 'Totale RU', 2010:2024, 'ambientale', 't', '-', 'Rifiuti urbani prodotti', 'anno_corrente', TRUE,
   'rd_totale_t',          'ISPRA Catasto rifiuti', 'Totale RD', 2010:2024, 'ambientale', 't', 'contesto', 'Raccolta differenziata (massa)', 'anno_corrente', TRUE,
   'indifferenziato_t',    'ISPRA Catasto rifiuti', 'Indifferenziato', 2010:2024, 'ambientale', 't', '-', 'Rifiuti urbani indifferenziati', 'anno_corrente', TRUE,
   'rd_pct_ispra',         'ISPRA Catasto rifiuti', 'Percentuale RD', 2010:2024, 'ambientale', '%', '+', 'Raccolta differenziata (%) metodo ISPRA', 'anno_corrente', TRUE,
-  'ru_procapite_kg',      'ISPRA Catasto rifiuti', 'RU pro capite', 2010:2024, 'ambientale', 'kg/ab/anno', '-', 'Rifiuti urbani pro capite', 'anno_corrente', TRUE,
-  'rd_procapite_kg',      'ISPRA Catasto rifiuti', 'RD pro capite', 2010:2024, 'ambientale', 'kg/ab/anno', '+', 'Raccolta differenziata pro capite', 'anno_corrente', TRUE
+  'ru_procapite_kg',      'ISPRA Catasto rifiuti', 'RU pro capite (se assente: Totale RU*1000/Popolazione, vedi mappa colonne)', 2010:2024, 'ambientale', 'kg/ab/anno', '-', 'Rifiuti urbani pro capite', 'anno_corrente', TRUE,
+  'rd_procapite_kg',      'ISPRA Catasto rifiuti', 'RD pro capite (se assente: Totale RD*1000/Popolazione, vedi mappa colonne)', 2010:2024, 'ambientale', 'kg/ab/anno', '+', 'Raccolta differenziata pro capite', 'anno_corrente', TRUE
 ) |> mutate(url = if_else(grepl('suolo', fonte), SOIL_API, paste0(waste_url('ANNO'))), file = NA_character_, tavola = NA_character_)
 
 build_spec <- function() {
@@ -469,7 +475,7 @@ read_istat_table <- function(path, table, id, years_exp, valid_codes = NULL) {
   yrow <- hy[yr, ]
   hfill <- apply(hd, 1, ffill_row); if (is.null(dim(hfill))) hfill <- matrix(hfill, ncol = 1)
   hlab <- apply(hfill, 1, function(z) paste(norm_txt(z), collapse = ' | '))   # etichetta completa per colonna
-  th <- hd[seq_len(max(0, yr - 1)), 1]; title <- paste(unique(th[nzchar(th)]), collapse = ' / ')
+  th <- hd[seq_len(max(0, yr - 1)), 1]; th <- th[nzchar(th) & !grepl('^indice$', norm_txt(th))]; title <- paste(unique(th), collapse = ' / ')
   nmcol <- setdiff(which(grepl('denominazione|comune', lab) & !grepl('codice', lab)), jc)
   nmv <- if (length(nmcol)) m[, nmcol[1]] else rep(NA_character_, nr)
   keep <- which(!is.na(cd) & seq_len(nr) >= r0)
@@ -531,14 +537,14 @@ classify_soil_fields <- function(fl) {
   c <- fl |> filter(grepl('^csuolo[0-9]+_[0-9]{2}$', name)) |>
     mutate(gruppo = sub('_[0-9]{2}$', '', name), anno = 2000L + as.integer(sub('.*_', '', name)),
            al = norm_txt(alias),
-           tipo = case_when(grepl('increm|variaz|nuovo consumo|consumo netto', al) & !grepl('%|percent', al) ~ 'incremento_suolo_ha',
+           tipo = case_when(grepl('increm|variaz|nuovo consumo|consumo netto', al) & !grepl('%|percent', al) ~ 'variazione_netta_suolo_ha',
                             grepl('%|percent', al) & !grepl('increm|variaz', al) ~ 'suolo_consumato_pct_ispra',
                             grepl('consum', al) & grepl('\\bha\\b|ettar', al) ~ 'suolo_consumato_ha',
                             TRUE ~ NA_character_))
   if (!is.null(CONFIG$soil_field_map)) {
     mp <- unlist(CONFIG$soil_field_map)
     c$tipo <- names(mp)[match(c$gruppo, mp)]
-    c$fonte_semantica <- 'CONFIG$soil_field_map (utente)'
+    c$fonte_semantica <- 'CONFIG$soil_field_map (verifica numerica in read_soil)'
   } else c$fonte_semantica <- 'alias ArcGIS'
   # anni del periodo nell'alias (es. 'incremento 2022-2023')
   yy <- regmatches(c$alias, gregexpr('(19|20)[0-9]{2}', c$alias))
@@ -566,7 +572,7 @@ read_soil <- function(RAW) {
   off <- 0L; batches <- list()
   oid <- intersect(c('objectid', 'OBJECTID', 'fid', 'FID'), fl$name)[1]
   repeat {
-    q <- list(where = '1=1', outFields = paste(c(codef, use$name), collapse = ','), returnGeometry = 'false',
+    q <- list(where = '1=1', outFields = paste(unique(c(codef, intersect(c('pro_com', 'PRO_COM'), fl$name), use$name, grep('__[0-9]+$|^Shape__Area$', fl$name, value = TRUE))), collapse = ','), returnGeometry = 'false',
               orderByFields = oid %||% codef, resultOffset = off, resultRecordCount = page, f = 'json')
     js <- get_json(paste0(SOIL_API, '/query'), q)
     if (!length(js$features)) break
@@ -581,20 +587,56 @@ read_soil <- function(RAW) {
   if (!is.null(n_tot) && nrow(dat) != n_tot) stop('Righe ArcGIS ', nrow(dat), ' != conteggio ', n_tot)
   if (nrow(dat) < CONFIG$n_min_comuni) stop('Servizio suolo senza copertura nazionale')
   dat$codice_istat <- code6(dat[[codef]])
-  if (anyNA(dat$codice_istat) || anyDuplicated(dat$codice_istat)) stop('Codici suolo mancanti/duplicati')
+  # pro_com_t talvolta ' ' (es. 166 comuni prov. Trento nel servizio 2025): ripiego su pro_com numerico, tracciato
+  alt <- intersect(c('pro_com', 'PRO_COM'), names(dat))[1]
+  if (!is.na(alt)) {
+    c2 <- code6(dat[[alt]]); both <- !is.na(dat$codice_istat) & !is.na(c2)
+    if (any(dat$codice_istat[both] != c2[both])) stop('pro_com_t e pro_com discordanti in ', sum(dat$codice_istat[both] != c2[both]), ' righe')
+    w <- is.na(dat$codice_istat) & !is.na(c2)
+    if (any(w)) {
+      dat$codice_istat[w] <- c2[w]
+      add_error('ISPRA suolo', paste0(sum(w), ' righe con pro_com_t vuoto: codice da pro_com (es. ', paste(head(c2[w], 3), collapse = ','), ')'), 'AVVISO')
+    }
+  }
+  if (anyNA(dat$codice_istat) || anyDuplicated(dat$codice_istat)) stop('Codici suolo mancanti/duplicati: NA=', sum(is.na(dat$codice_istat)), ' dup=', sum(duplicated(dat$codice_istat, incomparables = NA)))
   saveRDS(dat, file.path(RAW, 'ispra_suolo_attributi.rds'))
+  # --- verifica numerica della semantica (nessuna fiducia cieca nella mappa)
+  ver <- list()
+  stock <- use |> filter(tipo == 'suolo_consumato_ha') |> arrange(anno)
+  area_ha <- if ('Shape__Area' %in% names(dat)) num_it(dat$Shape__Area) / 1e4 else NULL
+  for (i in which(use$tipo == 'suolo_consumato_pct_ispra')) {
+    s1 <- stock$name[stock$anno == use$anno[i]]
+    if (is.null(area_ha) || !length(s1)) next
+    d <- abs(num_it(dat[[use$name[i]]]) - 100 * num_it(dat[[s1]]) / area_ha)
+    ok <- stats::median(d, na.rm = TRUE) < 0.1
+    ver[[length(ver) + 1]] <- tibble(campo = use$name[i], verifica = paste0('% vs 100*', s1, '/area'), base = s1,
+                                     quota_coerente = mean(d < 0.1, na.rm = TRUE), esito = if (ok) 'OK' else 'FALLITA')
+    if (!ok) stop('Semantica ', use$name[i], ' non confermata: % non coerente con ha/area')
+  }
+  keep_var <- character()
+  for (i in which(use$tipo == 'variazione_netta_suolo_ha')) {
+    y <- use$anno[i]; prev <- stock$anno[stock$anno < y]
+    if (!length(prev)) next
+    p <- max(prev); v <- num_it(dat[[use$name[i]]])
+    cands <- c(stock$name[stock$anno == p], grep(paste0('^', sub('_[0-9]{2}$', '', stock$name[1]), '__[0-9]+$'), names(dat), value = TRUE))
+    q <- vapply(cands, function(b) mean(abs(v - (num_it(dat[[stock$name[stock$anno == y]]]) - num_it(dat[[b]]))) < 0.05, na.rm = TRUE), 1)
+    best <- names(q)[which.max(q)]
+    ok <- max(q) >= 0.99
+    annuale <- (y - p) == 1L
+    ver[[length(ver) + 1]] <- tibble(campo = use$name[i], verifica = paste0(stock$name[stock$anno == y], ' - base'), base = best,
+                                     quota_coerente = max(q), esito = if (!ok) 'FALLITA' else if (!annuale) paste0('PLURIENNALE ', p, '-', y, ': esclusa') else 'OK')
+    if (!ok) stop('Semantica ', use$name[i], ' non confermata: non e la differenza tra stock')
+    if (annuale) keep_var <- c(keep_var, use$name[i])
+    if (annuale && best != stock$name[stock$anno == p]) add_error('ISPRA suolo', paste0(use$name[i], ': calcolata su base rivista ', best, ' (non ', stock$name[stock$anno == p], ')'), 'AVVISO')
+  }
+  write_diag(bind_rows(ver), 'ispra_suolo_verifica_semantica.csv')
+  rev <- grep('__[0-9]+$', fl$name, value = TRUE)
+  if (length(rev)) add_error('ISPRA suolo', paste('Campi revisione esclusi dalla serie stock:', paste(rev, collapse = ',')), 'AVVISO')
   li <- list()
   for (i in seq_len(nrow(use))) {
-    u <- use[i, ]; tipo <- u$tipo
-    if (tipo == 'incremento_suolo_ha') {
-      prev <- if (!is.na(u$anno_inizio)) u$anno_inizio else {
-        yy <- sort(cf$anno[cf$gruppo == u$gruppo]); p <- yy[yy < u$anno]; if (length(p)) max(p) else NA }
-      if (is.na(prev) || u$anno - prev != 1L) {
-        add_error('ISPRA suolo', paste0(u$name, ': incremento pluriennale (', prev, '-', u$anno, ') escluso dal panel annuale'), 'AVVISO')
-        next
-      }
-    }
-    li[[length(li) + 1]] <- tibble(codice_istat = dat$codice_istat, anno = u$anno, indicatore = tipo,
+    u <- use[i, ]
+    if (u$tipo == 'variazione_netta_suolo_ha' && !u$name %in% keep_var) next
+    li[[length(li) + 1]] <- tibble(codice_istat = dat$codice_istat, anno = u$anno, indicatore = u$tipo,
                                    valore = num_it(dat[[u$name]]))
   }
   ld <- bind_rows(li) |> filter(anno %in% CONFIG$years)
@@ -671,8 +713,12 @@ parse_ispra_rifiuti <- function(path, year) {
   # campi vuoti in coda (';' finale) non sono dati
   flds <- lapply(flds, function(f) { while (length(f) > nh && !nzchar(f[length(f)])) f <- f[-length(f)]; f })
   nf <- lengths(flds)
-  rinvio <- vapply(flds, function(f) any(grepl('vedi aggregazione', norm_txt(f))), TRUE)
-  tipo <- ifelse(rinvio, 'rinvio_aggregazione', ifelse(nf == nh, 'completa', 'anomala'))
+  # 'Dato riferito a': Comune | Aggregazione: X (capofila, valori = TOTALE aggregazione) | Vedi aggregazione: X
+  rinvio <- vapply(flds, function(f) any(grepl('^vedi aggregazione', norm_txt(f))), TRUE)
+  capof  <- vapply(flds, function(f) any(grepl('^aggregazione\\s*:', norm_txt(f))), TRUE)
+  tipo <- ifelse(rinvio, 'rinvio_aggregazione',
+          ifelse(capof & nf == nh, 'capofila_aggregazione',
+          ifelse(nf == nh, 'completa', ifelse(nf <= 1, 'nota', 'anomala'))))
   # --- colonna codice: intestazione + contenuto, mai scelta arbitraria
   full <- do.call(rbind, flds[tipo == 'completa'])
   if (is.null(full) || nrow(full) < 1) stop('Nessun record completo (anno ', year, ')')
@@ -705,8 +751,8 @@ parse_ispra_rifiuti <- function(path, year) {
                 regione_fonte = vapply(flds, getf, '', j = jreg),
                 provincia_fonte = vapply(flds, getf, '', j = jpro),
                 comune_fonte = vapply(flds, getf, '', j = jcom),
-                aggregazione = vapply(flds, function(f) { k <- grep('vedi aggregazione', norm_txt(f))[1]
-                  if (is.na(k)) NA_character_ else trimws(sub('(?i).*vedi aggregazione\\s*:?\\s*', '', f[k], perl = TRUE)) }, ''))
+                aggregazione = vapply(flds, function(f) { k <- grep('^(vedi )?aggregazione\\s*:', norm_txt(f))[1]
+                  if (is.na(k)) NA_character_ else trimws(sub('(?i)^\\s*(vedi\\s+)?aggregazione\\s*:?\\s*', '', f[k], perl = TRUE)) }, ''))
   is8 <- grepl('^[0-9]{7,8}$', gsub('"', '', rec$codice_orig))
   rec$codice_istat <- code6(rec$codice_orig, allow8 = TRUE)
   rec$reg_prefisso <- ifelse(is8, code8_region(rec$codice_orig), NA_character_)
@@ -718,25 +764,49 @@ parse_ispra_rifiuti <- function(path, year) {
   rec$tipo_record[is_agg] <- 'aggregazione'
   # valori numerici: SOLO per record completi; formato decimale deciso su tutto il file
   ok <- which(cm$esito == 'OK')
-  allv <- unlist(lapply(flds[rec$tipo_record %in% c('completa', 'aggregazione')], function(f) f[cm$colonna[ok]]))
+  NUMT <- c('completa', 'aggregazione', 'capofila_aggregazione')
+  allv <- unlist(lapply(flds[rec$tipo_record %in% NUMT], function(f) f[cm$colonna[ok]]))
   dec <- if (any(grepl(',', allv, fixed = TRUE))) 'comma' else 'dot'
   for (k in ok) {
     j <- cm$colonna[k]; v <- rep(NA_real_, nrow(rec))
-    w <- which(rec$tipo_record %in% c('completa', 'aggregazione'))
+    w <- which(rec$tipo_record %in% NUMT | (cm$indicatore[k] == 'popolazione_ispra' & rec$tipo_record == 'rinvio_aggregazione'))
     x <- num_it(vapply(flds[w], getf, '', j = j), dec)
     v[w] <- x; rec[[cm$indicatore[k]]] <- v
     cm$n_non_numerici[k] <- attr(x, 'n_non_numerici')
   }
   for (id in setdiff(WASTE_MEAS$id, cm$indicatore[ok])) rec[[id]] <- NA_real_
+  # pro capite non pubblicato -> derivato (t*1000/abitanti ISPRA), dichiarato come DERIVATO
+  for (dd in list(c('ru_procapite_kg', 'ru_totale_t'), c('rd_procapite_kg', 'rd_totale_t'))) {
+    w <- which(cm$indicatore == dd[1])
+    if (cm$esito[w] == 'NON_PRESENTE' && all(cm$esito[cm$indicatore %in% c(dd[2], 'popolazione_ispra')] == 'OK')) {
+      pop <- rec$popolazione_ispra; rec[[dd[1]]] <- ifelse(!is.na(pop) & pop > 0, rec[[dd[2]]] * 1000 / pop, NA_real_)
+      cm$esito[w] <- 'DERIVATO'; cm$intestazione[w] <- paste0(dd[2], ' * 1000 / popolazione_ispra'); cm$unita_dichiarata[w] <- 'kg/ab'
+    }
+  }
   rec$decimale <- dec
   # --- anomalie e tabelle
   anom <- tibble(anno = year, righe_file = righe, n_campi = nf, n_campi_attesi = nh, tipo = tipo,
                  testo = vapply(recs, function(r) substr(r$txt, 1, 500), ''))
-  anom <- anom[rec$tipo_record == 'anomala' | (rec$tipo_record == 'completa' & is.na(rec$codice_istat)) |
+  anom <- anom[rec$tipo_record %in% c('anomala', 'nota') | (rec$tipo_record == 'completa' & is.na(rec$codice_istat)) |
                grepl(',', anom$righe_file) | rec$flag_regione, ]
-  comuni <- rec |> filter(tipo_record %in% c('completa', 'rinvio_aggregazione'), !is.na(codice_istat))
-  # rinvii: misure SEMPRE NA (il valore e' dell'aggregazione)
-  for (id in WASTE_MEAS$id) comuni[[id]][comuni$tipo_record == 'rinvio_aggregazione'] <- NA_real_
+  # aggregazioni: righe senza codice + righe capofila (valori = totale aggregazione)
+  aggr <- rec |> filter(tipo_record %in% c('aggregazione', 'capofila_aggregazione')) |>
+    mutate(aggregazione = coalesce(aggregazione, comune_fonte),
+           capofila_codice = if_else(tipo_record == 'capofila_aggregazione', codice_istat, NA_character_))
+  membri <- rec |> filter(tipo_record %in% c('rinvio_aggregazione', 'capofila_aggregazione')) |>
+    transmute(anno, aggregazione, codice_istat, comune_fonte, ruolo = if_else(tipo_record == 'capofila_aggregazione', 'capofila', 'membro'),
+              popolazione_ispra)
+  if (nrow(aggr)) {
+    ps <- membri |> group_by(aggregazione) |> summarise(n_comuni_membri = n(), popolazione_membri = sum(popolazione_ispra, na.rm = TRUE), .groups = 'drop')
+    aggr <- left_join(aggr, ps, by = 'aggregazione')
+    # pro capite dell'aggregazione su popolazione dei membri (non quella del capofila)
+    for (dd in list(c('ru_procapite_kg', 'ru_totale_t'), c('rd_procapite_kg', 'rd_totale_t')))
+      if (cm$esito[cm$indicatore == dd[1]] == 'DERIVATO') aggr[[dd[1]]] <- aggr[[dd[2]]] * 1000 / aggr$popolazione_membri
+  }
+  comuni <- rec |> filter(tipo_record %in% c('completa', 'rinvio_aggregazione', 'capofila_aggregazione'), !is.na(codice_istat))
+  # membri e capofila: misure SEMPRE NA (il valore e' dell'aggregazione); popolazione resta comunale
+  agg_rows <- comuni$tipo_record %in% c('rinvio_aggregazione', 'capofila_aggregazione')
+  for (id in setdiff(WASTE_MEAS$id, 'popolazione_ispra')) comuni[[id]][agg_rows] <- NA_real_
   # duplicati codice-anno
   dup <- comuni |> group_by(codice_istat) |> filter(n() > 1) |> ungroup()
   if (nrow(dup)) {
@@ -745,17 +815,14 @@ parse_ispra_rifiuti <- function(path, year) {
     if (nrow(ident)) for (id in WASTE_MEAS$id) comuni[[id]][comuni$codice_istat %in% ident$codice_istat] <- NA_real_
     comuni$flag_duplicato <- comuni$codice_istat %in% dup$codice_istat
   } else comuni$flag_duplicato <- FALSE
-  aggr <- rec |> filter(tipo_record == 'aggregazione')
-  membri <- rec |> filter(tipo_record == 'rinvio_aggregazione') |>
-    transmute(anno, aggregazione, codice_istat, comune_fonte)
-  n_dati <- sum(rec$tipo_record != 'anomala')
-  pct_anom <- 100 * sum(rec$tipo_record == 'anomala') / max(1, nrow(rec))
+  pct_anom <- 100 * sum(rec$tipo_record == 'anomala') / max(1, sum(rec$tipo_record != 'nota'))
   list(comuni = comuni, aggregazioni = aggr, membri = membri, anomalie = anom, colmap = cm,
        header = tibble(anno = year, posizione = seq_len(nh), intestazione = header, normalizzata = hn),
        meta = tibble(anno = year, encoding = enc, n_righe_file = length(lines), riga_intestazione = hi,
                      righe_pre_intestazione = paste(substr(pre, 1, 200), collapse = ' // '),
                      n_campi_intestazione = nh, n_record = nrow(rec), n_completi = sum(rec$tipo_record == 'completa'),
-                     n_rinvii = sum(rec$tipo_record == 'rinvio_aggregazione'), n_aggregazioni = nrow(aggr),
+                     n_rinvii = sum(rec$tipo_record == 'rinvio_aggregazione'), n_capofila = sum(rec$tipo_record == 'capofila_aggregazione'),
+                     n_aggregazioni = nrow(aggr), n_note = sum(rec$tipo_record == 'nota'),
                      n_anomali = sum(rec$tipo_record == 'anomala'), pct_anomali = pct_anom,
                      n_comuni = nrow(comuni), codice_colonna = header[jc], codice_metodo = how, decimale = dec,
                      n_flag_regione = sum(rec$flag_regione), n_duplicati = nrow(dup)))
@@ -772,7 +839,7 @@ read_waste <- function(RAW, years = CONFIG$waste_years) {
       x <- parse_ispra_rifiuti(p, y)
       if (x$meta$pct_anomali > CONFIG$max_anomalie_pct) stop(sprintf('%.1f%% record anomali (>%s%%): struttura non compresa', x$meta$pct_anomali, CONFIG$max_anomalie_pct))
       if (x$meta$n_comuni < CONFIG$n_min_comuni) stop('Solo ', x$meta$n_comuni, ' comuni: non nazionale')
-      if (all(x$colmap$esito != 'OK')) stop('Nessuna misura identificata; vedi diagnostica intestazioni')
+      if (!any(x$colmap$esito == 'OK')) stop('Nessuna misura identificata; vedi diagnostica intestazioni')
       for (k in which(x$colmap$esito == 'AMBIGUA')) add_error(comp, paste0(x$colmap$indicatore[k], ': colonne ambigue [', x$colmap$intestazione[k], '] -> NA'), 'AVVISO')
       saveRDS(x, file.path(RAW, paste0('ispra_rifiuti_', y, '_parsed.rds')))
       x
@@ -782,7 +849,7 @@ read_waste <- function(RAW, years = CONFIG$waste_years) {
   if (!length(res)) stop('Nessun CSV ISPRA interpretabile')
   pick <- function(el) bind_rows(lapply(res, `[[`, el))
   comuni <- pick('comuni')
-  acq <- pick('colmap') |> filter(esito == 'OK') |> transmute(indicatore, anno = as.integer(anno), acquisito = TRUE)
+  acq <- pick('colmap') |> filter(esito %in% c('OK', 'DERIVATO')) |> transmute(indicatore, anno = as.integer(anno), acquisito = TRUE)
   list(comuni = comuni, aggregazioni = pick('aggregazioni'), membri = pick('membri'), anomalie = pick('anomalie'),
        colmap = pick('colmap'), header = pick('header'), meta = pick('meta'), acq = acq)
 }
@@ -954,10 +1021,10 @@ qc_panel <- function(panel, base, spec, L, extra = list()) {
   # aggregazioni: nessun valore sui membri
   if ('rifiuti_stato' %in% names(panel)) {
     wid <- intersect(spec$indicatore[spec$sorgente == 'waste'], names(panel))
-    m <- panel[panel$rifiuti_stato %in% 'in_aggregazione', wid, drop = FALSE]
+    m <- panel[panel$rifiuti_stato %in% c('in_aggregazione', 'capofila_aggregazione'), setdiff(wid, 'popolazione_ispra'), drop = FALSE]
     n_v <- if (nrow(m)) sum(!is.na(as.matrix(m))) else 0L
     add_qc('aggregazioni non attribuite ai comuni', 'ISPRA rifiuti', if (n_v) 'FAIL' else 'OK', n_v,
-           paste0(sum(panel$rifiuti_stato %in% 'in_aggregazione'), ' comune-anno in aggregazione'))
+           paste0(sum(panel$rifiuti_stato %in% c('in_aggregazione', 'capofila_aggregazione')), ' comune-anno in aggregazione'))
   }
   # coerenze tra fonti / unita'
   cross <- function(a, b, nome, tol) {
@@ -969,7 +1036,7 @@ qc_panel <- function(panel, base, spec, L, extra = list()) {
                    suppressWarnings(stats::cor(panel[[a]][w], panel[[b]][w]))))
   }
   cross('rd_pct_istat', 'rd_pct_ispra', 'coerenza RD% ISTAT/ISPRA', 1)
-  if (all(c('ru_totale_t', 'popolazione_ispra', 'ru_procapite_kg') %in% names(panel))) {
+  if (all(c('ru_totale_t', 'popolazione_ispra', 'ru_procapite_kg') %in% names(panel)) && !isTRUE(.S$procapite_derivato)) {
     panel$.pc <- panel$ru_totale_t * 1000 / panel$popolazione_ispra
     w <- !is.na(panel$.pc) & !is.na(panel$ru_procapite_kg) & panel$ru_procapite_kg > 0
     if (sum(w) > 50) { r <- stats::median(panel$.pc[w] / panel$ru_procapite_kg[w])
@@ -1133,6 +1200,7 @@ run_pipeline <- function(root = ROOT) {
   hw <- NULL
   if (!is.null(waste)) {
     hw <- harmonize_codes(waste$comuni, base, var)
+    .S$procapite_derivato <- any(waste$colmap$esito == 'DERIVATO')
     write_diag(waste$meta, 'ispra_rifiuti_struttura_file.csv'); write_diag(waste$colmap, 'ispra_rifiuti_mappa_colonne.csv')
     write_diag(waste$header, 'ispra_rifiuti_intestazioni.csv'); write_diag(waste$anomalie, 'ispra_rifiuti_righe_anomale_o_segnalate.csv')
     readr::write_csv(waste$aggregazioni, file.path(OUT, 'ispra_rifiuti_aggregazioni_sovracomunali.csv'), na = 'NA')
@@ -1165,13 +1233,14 @@ run_pipeline <- function(root = ROOT) {
   if (!is.null(hw)) {
     wid <- intersect(WASTE_MEAS$id, names(hw$dentro))
     wd <- hw$dentro |> transmute(codice_istat, anno, across(all_of(wid)),
-                                 rifiuti_stato = if_else(tipo_record == 'rinvio_aggregazione', 'in_aggregazione', 'comunale'),
+                                 rifiuti_stato = case_when(tipo_record == 'rinvio_aggregazione' ~ 'in_aggregazione',
+                                                           tipo_record == 'capofila_aggregazione' ~ 'capofila_aggregazione', TRUE ~ 'comunale'),
                                  rifiuti_aggregazione = aggregazione, rifiuti_codice_fonte = codice_fonte,
                                  rifiuti_ricodificato = ricodificato, rifiuti_flag_duplicato = flag_duplicato)
     panel <- left_join(panel, wd, by = c('codice_istat', 'anno'))
     pres <- bind_rows(pres, inner_join(select(wd, codice_istat, anno), waste$acq, by = 'anno', relationship = 'many-to-many') |> select(indicatore, codice_istat, anno))
     acq$waste <- waste$acq
-    aggr_members <- filter(wd, rifiuti_stato == 'in_aggregazione')
+    aggr_members <- filter(wd, rifiuti_stato %in% c('in_aggregazione', 'capofila_aggregazione'))
   }
   for (id in spec$indicatore) if (!id %in% names(panel)) panel[[id]] <- NA_real_
   esist <- if (!is.null(var)) esistenza_tbl(base$codice_istat, years, var) else NULL
@@ -1199,8 +1268,9 @@ run_pipeline <- function(root = ROOT) {
 
   # I. dizionario
   anni_acq <- acq_t |> group_by(indicatore) |> summarise(anni_acquisiti = paste(sort(unique(anno)), collapse = ';'), .groups = 'drop')
-  anni_dat <- as_tibble(C$indicatore_anno) |> filter(n_osservati > 0) |> group_by(indicatore) |>
-    summarise(anni_con_dati = paste(sort(anno), collapse = ';'), n_osservazioni = sum(n_osservati), .groups = 'drop')
+  anni_dat <- bind_rows(lapply(intersect(spec$indicatore, names(panel)), function(id) {
+    ok <- !is.na(panel[[id]]); if (!any(ok)) return(NULL)
+    tibble(indicatore = id, anni_con_dati = paste(sort(unique(panel$anno[ok])), collapse = ';'), n_osservazioni = sum(ok)) }))
   dict <- spec |> mutate(anni_teorici = vapply(anni_teorici, function(a) paste(a, collapse = ';'), ''),
                          titolo_tavola_fonte = vapply(indicatore, function(i) titoli[[i]] %||% NA_character_, '')) |>
     left_join(anni_acq, by = 'indicatore') |> left_join(anni_dat, by = 'indicatore') |>
