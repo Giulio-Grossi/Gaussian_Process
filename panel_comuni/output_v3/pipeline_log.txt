@@ -1,10 +1,11 @@
-PIPELINE v3 |  2026-11-02 21:59:43 
+PIPELINE v3 |  2026-11-03 08:46:58 
 Geometrie ISTAT: 7896 comuni (confini 01/01/2025 = 31/12/2024). 
+QC WARN [celle ISTAT non numeriche (diverse da ".") | ISTAT]: indice_vecchiaia 
+QC WARN [segno "." (fenomeno non esiste) lasciato NA | ISTAT]: auto_motorizzazione:6;densita_unita_locali:6;ftth_pct:119;moto_motorizzazione:7;redditi_bassi_pct:14;tasso_imprenditorialita:16 
 AVVISO [ISPRA suolo]: 166 righe con pro_com_t vuoto: codice da pro_com (es. 022040,022039,022042) 
 AVVISO [ISPRA suolo]: csuolo8_24: calcolata su base rivista csuolo1__1 (non csuolo1_23) 
 AVVISO [ISPRA suolo]: Campi revisione esclusi dalla serie stock: csuolo1__1 
 QC FAIL [percentuale in [0,100] | auto_pre_euro4_pct]:  
-QC WARN [copertura nazionale (>=50% comuni) | indicatore x anno]: turismo_arrivi:2014 turismo_arrivi:2015 turismo_arrivi:2016 turismo_arrivi:2017 turismo_arrivi:2018 turismo_arrivi:2019 turismo_arrivi:2020 turismo_arrivi:2021 turismo_arrivi:2022 turismo_presenze:2014 turismo_presenze:2015 turismo_presenze:2016 turismo_presenze:2017 turismo_presenze:2018 turismo_presenze:2019 turismo_presenze:2020 turismo_presenze:2021 turismo_presenze:2022 densita_turistica:2014 densita_turistica:2015 densita_turistica:2016 densita_turistica:2017 densita_turistica:2018 densita_turistica:2019 densita_turistica:2020 densita_turistica:2021 densita_turistica:2022 
 QC WARN [codici ISPRA fuori geografia 2024 | ISPRA rifiuti]: osservazioni non attribuite (soppressi/variati): vedi diagnostica 
 QC WARN [nomi incoerenti codice-anno | ISPRA rifiuti]:  
 FINE | comuni=7896 | anni=2006-2024 | indicatori acquisiti=32/32 | errori=0 | QC FAIL=1 

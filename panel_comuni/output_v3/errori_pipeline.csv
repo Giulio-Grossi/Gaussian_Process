@@ -1,4 +1,4 @@
 ts,livello,componente,dettaglio
-2026-11-02 22:04:32,AVVISO,ISPRA suolo,"166 righe con pro_com_t vuoto: codice da pro_com (es. 022040,022039,022042)"
-2026-11-02 22:04:33,AVVISO,ISPRA suolo,csuolo8_24: calcolata su base rivista csuolo1__1 (non csuolo1_23)
-2026-11-02 22:04:33,AVVISO,ISPRA suolo,Campi revisione esclusi dalla serie stock: csuolo1__1
+2026-11-03 08:51:28,AVVISO,ISPRA suolo,"166 righe con pro_com_t vuoto: codice da pro_com (es. 022040,022039,022042)"
+2026-11-03 08:51:28,AVVISO,ISPRA suolo,csuolo8_24: calcolata su base rivista csuolo1__1 (non csuolo1_23)
+2026-11-03 08:51:28,AVVISO,ISPRA suolo,Campi revisione esclusi dalla serie stock: csuolo1__1

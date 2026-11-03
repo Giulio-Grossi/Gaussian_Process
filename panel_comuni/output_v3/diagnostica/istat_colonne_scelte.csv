@@ -1,203 +1,203 @@
-anno,colonna,etichetta,n_non_numerici,indicatore,foglio
-2014,8, |  |  | 2014 | maschi,0,popolazione,Tav. 1.1 Comuni
-2015,11, |  |  | 2015 | maschi,0,popolazione,Tav. 1.1 Comuni
-2016,14, |  |  | 2016 | maschi,0,popolazione,Tav. 1.1 Comuni
-2017,17, |  |  | 2017 | maschi,0,popolazione,Tav. 1.1 Comuni
-2018,20, |  |  | 2018 | maschi,0,popolazione,Tav. 1.1 Comuni
-2019,23, |  |  | 2019 | maschi,0,popolazione,Tav. 1.1 Comuni
-2020,26, |  |  | 2020 | maschi,0,popolazione,Tav. 1.1 Comuni
-2021,29, |  |  | 2021 | maschi,0,popolazione,Tav. 1.1 Comuni
-2022,32, |  |  | 2022 | maschi,0,popolazione,Tav. 1.1 Comuni
-2023,35, |  |  | 2023 | maschi,0,popolazione,Tav. 1.1 Comuni
-2024,38, |  |  | 2024 | maschi,0,popolazione,Tav. 1.1 Comuni
-2014,8, |  |  | 2014,0,indice_vecchiaia,Tav. 6.1 Comuni
-2015,9, |  |  | 2015,1,indice_vecchiaia,Tav. 6.1 Comuni
-2016,10, |  |  | 2016,3,indice_vecchiaia,Tav. 6.1 Comuni
-2017,11, |  |  | 2017,2,indice_vecchiaia,Tav. 6.1 Comuni
-2018,12, |  |  | 2018,1,indice_vecchiaia,Tav. 6.1 Comuni
-2019,13, |  |  | 2019,4,indice_vecchiaia,Tav. 6.1 Comuni
-2020,14, |  |  | 2020,2,indice_vecchiaia,Tav. 6.1 Comuni
-2021,15, |  |  | 2021,0,indice_vecchiaia,Tav. 6.1 Comuni
-2022,16, |  |  | 2022,2,indice_vecchiaia,Tav. 6.1 Comuni
-2023,17, |  |  | 2023,2,indice_vecchiaia,Tav. 6.1 Comuni
-2024,18, |  |  | 2024,4,indice_vecchiaia,Tav. 6.1 Comuni
-2014,8, |  |  | 2014,0,indice_dipendenza,Tav. 8.1 Comuni
-2015,9, |  |  | 2015,0,indice_dipendenza,Tav. 8.1 Comuni
-2016,10, |  |  | 2016,0,indice_dipendenza,Tav. 8.1 Comuni
-2017,11, |  |  | 2017,0,indice_dipendenza,Tav. 8.1 Comuni
-2018,12, |  |  | 2018,0,indice_dipendenza,Tav. 8.1 Comuni
-2019,13, |  |  | 2019,0,indice_dipendenza,Tav. 8.1 Comuni
-2020,14, |  |  | 2020,0,indice_dipendenza,Tav. 8.1 Comuni
-2021,15, |  |  | 2021,0,indice_dipendenza,Tav. 8.1 Comuni
-2022,16, |  |  | 2022,0,indice_dipendenza,Tav. 8.1 Comuni
-2023,17, |  |  | 2023,0,indice_dipendenza,Tav. 8.1 Comuni
-2024,18, |  |  | 2024,0,indice_dipendenza,Tav. 8.1 Comuni
-2014,8, |  |  | 2014,0,rd_pct_istat,Tav. 6.1 Comuni
-2015,9, |  |  | 2015,0,rd_pct_istat,Tav. 6.1 Comuni
-2016,10, |  |  | 2016,0,rd_pct_istat,Tav. 6.1 Comuni
-2017,11, |  |  | 2017,0,rd_pct_istat,Tav. 6.1 Comuni
-2018,12, |  |  | 2018,0,rd_pct_istat,Tav. 6.1 Comuni
-2019,13, |  |  | 2019,0,rd_pct_istat,Tav. 6.1 Comuni
-2020,14, |  |  | 2020,0,rd_pct_istat,Tav. 6.1 Comuni
-2021,15, |  |  | 2021,0,rd_pct_istat,Tav. 6.1 Comuni
-2022,16, |  |  | 2022,0,rd_pct_istat,Tav. 6.1 Comuni
-2023,17, |  |  | 2023,0,rd_pct_istat,Tav. 6.1 Comuni
-2024,18, |  |  | 2024,0,rd_pct_istat,Tav. 6.1 Comuni
-2014,8, |  |  | 2014,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2015,9, |  |  | 2015,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2016,10, |  |  | 2016,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2017,11, |  |  | 2017,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2018,12, |  |  | 2018,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2019,13, |  |  | 2019,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2020,14, |  |  | 2020,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2021,15, |  |  | 2021,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2022,16, |  |  | 2022,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2023,17, |  |  | 2023,0,auto_pre_euro4_pct,Tav. 8.1 Comuni
-2015,8, |  |  | 2015,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2016,9, |  |  | 2016,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2017,10, |  |  | 2017,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2018,11, |  |  | 2018,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2019,12, |  |  | 2019,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2020,13, |  |  | 2020,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2021,14, |  |  | 2021,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2022,15, |  |  | 2022,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2023,16, |  |  | 2023,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2024,17, |  |  | 2024,0,suolo_consumato_pct_istat,Tav. 9.1 Comuni
-2014,8, |  |  | 2014,0,auto_motorizzazione,Tav. 8.1 Comuni
-2015,9, |  |  | 2015,0,auto_motorizzazione,Tav. 8.1 Comuni
-2016,10, |  |  | 2016,0,auto_motorizzazione,Tav. 8.1 Comuni
-2017,11, |  |  | 2017,0,auto_motorizzazione,Tav. 8.1 Comuni
-2018,12, |  |  | 2018,6,auto_motorizzazione,Tav. 8.1 Comuni
-2019,13, |  |  | 2019,0,auto_motorizzazione,Tav. 8.1 Comuni
-2020,14, |  |  | 2020,0,auto_motorizzazione,Tav. 8.1 Comuni
-2021,15, |  |  | 2021,0,auto_motorizzazione,Tav. 8.1 Comuni
-2022,16, |  |  | 2022,0,auto_motorizzazione,Tav. 8.1 Comuni
-2023,17, |  |  | 2023,0,auto_motorizzazione,Tav. 8.1 Comuni
-2014,8, |  |  | 2014,0,moto_motorizzazione,Tav. 9.1 Comuni
-2015,9, |  |  | 2015,0,moto_motorizzazione,Tav. 9.1 Comuni
-2016,10, |  |  | 2016,0,moto_motorizzazione,Tav. 9.1 Comuni
-2017,11, |  |  | 2017,0,moto_motorizzazione,Tav. 9.1 Comuni
-2018,12, |  |  | 2018,7,moto_motorizzazione,Tav. 9.1 Comuni
-2019,13, |  |  | 2019,0,moto_motorizzazione,Tav. 9.1 Comuni
-2020,14, |  |  | 2020,0,moto_motorizzazione,Tav. 9.1 Comuni
-2021,15, |  |  | 2021,0,moto_motorizzazione,Tav. 9.1 Comuni
-2022,16, |  |  | 2022,0,moto_motorizzazione,Tav. 9.1 Comuni
-2023,17, |  |  | 2023,0,moto_motorizzazione,Tav. 9.1 Comuni
-2014,8, |  |  | 2014,1734,incidentalita,Tav. 1.1 Comuni
-2015,9, |  |  | 2015,1751,incidentalita,Tav. 1.1 Comuni
-2016,10, |  |  | 2016,1776,incidentalita,Tav. 1.1 Comuni
-2017,11, |  |  | 2017,1715,incidentalita,Tav. 1.1 Comuni
-2018,12, |  |  | 2018,1729,incidentalita,Tav. 1.1 Comuni
-2019,13, |  |  | 2019,1688,incidentalita,Tav. 1.1 Comuni
-2020,14, |  |  | 2020,1959,incidentalita,Tav. 1.1 Comuni
-2021,15, |  |  | 2021,1690,incidentalita,Tav. 1.1 Comuni
-2022,16, |  |  | 2022,1657,incidentalita,Tav. 1.1 Comuni
-2023,17, |  |  | 2023,1642,incidentalita,Tav. 1.1 Comuni
-2024,18, |  |  | 2024,1557,incidentalita,Tav. 1.1 Comuni
-2018,8, |  |  | 2018,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2019,9, |  |  | 2019,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2020,10, |  |  | 2020,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2021,11, |  |  | 2021,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2022,12, |  |  | 2022,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2023,13, |  |  | 2023,0,titolo_secondario_pct,Tav. 4.1 Comuni
-2018,8, |  |  | 2018,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2019,9, |  |  | 2019,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2020,10, |  |  | 2020,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2021,11, |  |  | 2021,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2022,12, |  |  | 2022,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2023,13, |  |  | 2023,0,titolo_terziario_pct,Tav. 5.1 Comuni
-2019,8, |  |  | 2019,0,tasso_occupazione,Tav. 1.1 Comuni
-2021,9, |  |  | 2021,0,tasso_occupazione,Tav. 1.1 Comuni
-2022,10, |  |  | 2022,0,tasso_occupazione,Tav. 1.1 Comuni
-2023,11, |  |  | 2023,0,tasso_occupazione,Tav. 1.1 Comuni
-2019,8, |  |  | 2019,0,tasso_disoccupazione,Tav. 2.1 Comuni
-2021,9, |  |  | 2021,0,tasso_disoccupazione,Tav. 2.1 Comuni
-2022,10, |  |  | 2022,0,tasso_disoccupazione,Tav. 2.1 Comuni
-2023,11, |  |  | 2023,0,tasso_disoccupazione,Tav. 2.1 Comuni
-2014,8, |  |  | 2014,2,redditi_bassi_pct,Tav. 1.1 Comuni
-2015,9, |  |  | 2015,2,redditi_bassi_pct,Tav. 1.1 Comuni
-2016,10, |  |  | 2016,2,redditi_bassi_pct,Tav. 1.1 Comuni
-2017,11, |  |  | 2017,1,redditi_bassi_pct,Tav. 1.1 Comuni
-2018,12, |  |  | 2018,1,redditi_bassi_pct,Tav. 1.1 Comuni
-2019,13, |  |  | 2019,1,redditi_bassi_pct,Tav. 1.1 Comuni
-2020,14, |  |  | 2020,1,redditi_bassi_pct,Tav. 1.1 Comuni
-2021,15, |  |  | 2021,0,redditi_bassi_pct,Tav. 1.1 Comuni
-2022,16, |  |  | 2022,0,redditi_bassi_pct,Tav. 1.1 Comuni
-2023,17, |  |  | 2023,4,redditi_bassi_pct,Tav. 1.1 Comuni
-2014,8, |  |  | 2014,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2015,9, |  |  | 2015,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2016,10, |  |  | 2016,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2017,11, |  |  | 2017,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2018,12, |  |  | 2018,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2019,13, |  |  | 2019,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2020,14, |  |  | 2020,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2021,15, |  |  | 2021,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2022,16, |  |  | 2022,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2023,17, |  |  | 2023,0,reddito_imponibile_medio,Tav. 2.1 Comuni
-2022,8, |  |  | 2022,71,ftth_pct,Tav. 2.1 Comuni
-2023,9, |  |  | 2023,48,ftth_pct,Tav. 2.1 Comuni
-2024,10, |  |  | 2024,0,ftth_pct,Tav. 2.1 Comuni
-2014,8, |  |  | 2014,1,tasso_imprenditorialita,Tav. 1.1 Comuni
-2015,9, |  |  | 2015,1,tasso_imprenditorialita,Tav. 1.1 Comuni
-2016,10, |  |  | 2016,2,tasso_imprenditorialita,Tav. 1.1 Comuni
-2017,11, |  |  | 2017,2,tasso_imprenditorialita,Tav. 1.1 Comuni
-2018,12, |  |  | 2018,2,tasso_imprenditorialita,Tav. 1.1 Comuni
-2019,13, |  |  | 2019,3,tasso_imprenditorialita,Tav. 1.1 Comuni
-2020,14, |  |  | 2020,1,tasso_imprenditorialita,Tav. 1.1 Comuni
-2021,15, |  |  | 2021,2,tasso_imprenditorialita,Tav. 1.1 Comuni
-2022,16, |  |  | 2022,2,tasso_imprenditorialita,Tav. 1.1 Comuni
-2023,17, |  |  | 2023,0,tasso_imprenditorialita,Tav. 1.1 Comuni
-2014,8, |  |  | 2014,0,densita_unita_locali,Tav. 2.1 Comuni
-2015,9, |  |  | 2015,1,densita_unita_locali,Tav. 2.1 Comuni
-2016,10, |  |  | 2016,2,densita_unita_locali,Tav. 2.1 Comuni
-2017,11, |  |  | 2017,0,densita_unita_locali,Tav. 2.1 Comuni
-2018,12, |  |  | 2018,1,densita_unita_locali,Tav. 2.1 Comuni
-2019,13, |  |  | 2019,1,densita_unita_locali,Tav. 2.1 Comuni
-2020,14, |  |  | 2020,0,densita_unita_locali,Tav. 2.1 Comuni
-2021,15, |  |  | 2021,1,densita_unita_locali,Tav. 2.1 Comuni
-2022,16, |  |  | 2022,0,densita_unita_locali,Tav. 2.1 Comuni
-2023,17, |  |  | 2023,0,densita_unita_locali,Tav. 2.1 Comuni
-2014,8, |  |  | 2014,4635,turismo_arrivi,Tav. 2.1 Comuni
-2015,9, |  |  | 2015,4624,turismo_arrivi,Tav. 2.1 Comuni
-2016,10, |  |  | 2016,4605,turismo_arrivi,Tav. 2.1 Comuni
-2017,11, |  |  | 2017,4417,turismo_arrivi,Tav. 2.1 Comuni
-2018,12, |  |  | 2018,4586,turismo_arrivi,Tav. 2.1 Comuni
-2019,13, |  |  | 2019,4616,turismo_arrivi,Tav. 2.1 Comuni
-2020,14, |  |  | 2020,4810,turismo_arrivi,Tav. 2.1 Comuni
-2021,15, |  |  | 2021,4507,turismo_arrivi,Tav. 2.1 Comuni
-2022,16, |  |  | 2022,4390,turismo_arrivi,Tav. 2.1 Comuni
-2023,17, |  |  | 2023,3402,turismo_arrivi,Tav. 2.1 Comuni
-2024,18, |  |  | 2024,2976,turismo_arrivi,Tav. 2.1 Comuni
-2014,8, |  |  | 2014,4635,turismo_presenze,Tav. 3.1 Comuni
-2015,9, |  |  | 2015,4624,turismo_presenze,Tav. 3.1 Comuni
-2016,10, |  |  | 2016,4605,turismo_presenze,Tav. 3.1 Comuni
-2017,11, |  |  | 2017,4417,turismo_presenze,Tav. 3.1 Comuni
-2018,12, |  |  | 2018,4586,turismo_presenze,Tav. 3.1 Comuni
-2019,13, |  |  | 2019,4616,turismo_presenze,Tav. 3.1 Comuni
-2020,14, |  |  | 2020,4810,turismo_presenze,Tav. 3.1 Comuni
-2021,15, |  |  | 2021,4507,turismo_presenze,Tav. 3.1 Comuni
-2022,16, |  |  | 2022,4390,turismo_presenze,Tav. 3.1 Comuni
-2023,17, |  |  | 2023,3402,turismo_presenze,Tav. 3.1 Comuni
-2024,18, |  |  | 2024,2976,turismo_presenze,Tav. 3.1 Comuni
-2014,8, |  |  | 2014,4635,densita_turistica,Tav. 4.1 Comuni
-2015,9, |  |  | 2015,4624,densita_turistica,Tav. 4.1 Comuni
-2016,10, |  |  | 2016,4605,densita_turistica,Tav. 4.1 Comuni
-2017,11, |  |  | 2017,4417,densita_turistica,Tav. 4.1 Comuni
-2018,12, |  |  | 2018,4586,densita_turistica,Tav. 4.1 Comuni
-2019,13, |  |  | 2019,4616,densita_turistica,Tav. 4.1 Comuni
-2020,14, |  |  | 2020,4810,densita_turistica,Tav. 4.1 Comuni
-2021,15, |  |  | 2021,4507,densita_turistica,Tav. 4.1 Comuni
-2022,16, |  |  | 2022,4390,densita_turistica,Tav. 4.1 Comuni
-2023,17, |  |  | 2023,3402,densita_turistica,Tav. 4.1 Comuni
-2024,18, |  |  | 2024,2976,densita_turistica,Tav. 4.1 Comuni
-2014,8, |  |  | 2014,0,densita_posti_letto,Tav. 7.1 Comuni
-2015,9, |  |  | 2015,0,densita_posti_letto,Tav. 7.1 Comuni
-2016,10, |  |  | 2016,0,densita_posti_letto,Tav. 7.1 Comuni
-2017,11, |  |  | 2017,1,densita_posti_letto,Tav. 7.1 Comuni
-2018,12, |  |  | 2018,0,densita_posti_letto,Tav. 7.1 Comuni
-2019,13, |  |  | 2019,0,densita_posti_letto,Tav. 7.1 Comuni
-2020,14, |  |  | 2020,0,densita_posti_letto,Tav. 7.1 Comuni
-2021,15, |  |  | 2021,1,densita_posti_letto,Tav. 7.1 Comuni
-2022,16, |  |  | 2022,0,densita_posti_letto,Tav. 7.1 Comuni
-2023,17, |  |  | 2023,0,densita_posti_letto,Tav. 7.1 Comuni
-2024,18, |  |  | 2024,0,densita_posti_letto,Tav. 7.1 Comuni
+anno,colonna,etichetta,n_non_numerici,n_punto,punto,indicatore,foglio
+2014,10, |  |  | 2014 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2015,13, |  |  | 2015 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2016,16, |  |  | 2016 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2017,19, |  |  | 2017 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2018,22, |  |  | 2018 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2019,25, |  |  | 2019 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2020,28, |  |  | 2020 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2021,31, |  |  | 2021 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2022,34, |  |  | 2022 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2023,37, |  |  | 2023 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2024,40, |  |  | 2024 | totale,0,0,NA,popolazione,Tav. 1.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2015,9, |  |  | 2015,1,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2016,10, |  |  | 2016,3,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2017,11, |  |  | 2017,2,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2018,12, |  |  | 2018,1,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2019,13, |  |  | 2019,4,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2020,14, |  |  | 2020,2,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2022,16, |  |  | 2022,2,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2023,17, |  |  | 2023,2,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2024,18, |  |  | 2024,4,0,NA,indice_vecchiaia,Tav. 6.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2018,12, |  |  | 2018,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2024,18, |  |  | 2024,0,0,NA,indice_dipendenza,Tav. 8.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2018,12, |  |  | 2018,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2024,18, |  |  | 2024,0,0,NA,rd_pct_istat,Tav. 6.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2018,12, |  |  | 2018,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,auto_pre_euro4_pct,Tav. 8.1 Comuni
+2015,8, |  |  | 2015,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2016,9, |  |  | 2016,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2017,10, |  |  | 2017,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2018,11, |  |  | 2018,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2019,12, |  |  | 2019,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2020,13, |  |  | 2020,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2021,14, |  |  | 2021,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2022,15, |  |  | 2022,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2023,16, |  |  | 2023,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2024,17, |  |  | 2024,0,0,NA,suolo_consumato_pct_istat,Tav. 9.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2018,12, |  |  | 2018,0,6,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,auto_motorizzazione,Tav. 8.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2018,12, |  |  | 2018,0,7,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,moto_motorizzazione,Tav. 9.1 Comuni
+2014,8, |  |  | 2014,0,1734,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2015,9, |  |  | 2015,0,1751,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2016,10, |  |  | 2016,0,1776,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2017,11, |  |  | 2017,0,1715,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2018,12, |  |  | 2018,0,1729,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2019,13, |  |  | 2019,0,1688,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2020,14, |  |  | 2020,0,1959,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2021,15, |  |  | 2021,0,1690,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2022,16, |  |  | 2022,0,1657,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2023,17, |  |  | 2023,0,1642,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2024,18, |  |  | 2024,0,1557,convertito a 0 (fenomeno non esiste),incidentalita,Tav. 1.1 Comuni
+2018,8, |  |  | 2018,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2019,9, |  |  | 2019,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2020,10, |  |  | 2020,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2021,11, |  |  | 2021,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2022,12, |  |  | 2022,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2023,13, |  |  | 2023,0,0,NA,titolo_secondario_pct,Tav. 4.1 Comuni
+2018,8, |  |  | 2018,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2019,9, |  |  | 2019,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2020,10, |  |  | 2020,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2021,11, |  |  | 2021,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2022,12, |  |  | 2022,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2023,13, |  |  | 2023,0,0,NA,titolo_terziario_pct,Tav. 5.1 Comuni
+2019,8, |  |  | 2019,0,0,NA,tasso_occupazione,Tav. 1.1 Comuni
+2021,9, |  |  | 2021,0,0,NA,tasso_occupazione,Tav. 1.1 Comuni
+2022,10, |  |  | 2022,0,0,NA,tasso_occupazione,Tav. 1.1 Comuni
+2023,11, |  |  | 2023,0,0,NA,tasso_occupazione,Tav. 1.1 Comuni
+2019,8, |  |  | 2019,0,0,NA,tasso_disoccupazione,Tav. 2.1 Comuni
+2021,9, |  |  | 2021,0,0,NA,tasso_disoccupazione,Tav. 2.1 Comuni
+2022,10, |  |  | 2022,0,0,NA,tasso_disoccupazione,Tav. 2.1 Comuni
+2023,11, |  |  | 2023,0,0,NA,tasso_disoccupazione,Tav. 2.1 Comuni
+2014,8, |  |  | 2014,0,2,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2015,9, |  |  | 2015,0,2,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2016,10, |  |  | 2016,0,2,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2017,11, |  |  | 2017,0,1,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2018,12, |  |  | 2018,0,1,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2019,13, |  |  | 2019,0,1,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2020,14, |  |  | 2020,0,1,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2023,17, |  |  | 2023,0,4,NA,redditi_bassi_pct,Tav. 1.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2015,9, |  |  | 2015,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2016,10, |  |  | 2016,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2018,12, |  |  | 2018,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2019,13, |  |  | 2019,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2021,15, |  |  | 2021,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,reddito_imponibile_medio,Tav. 2.1 Comuni
+2022,8, |  |  | 2022,0,71,NA,ftth_pct,Tav. 2.1 Comuni
+2023,9, |  |  | 2023,0,48,NA,ftth_pct,Tav. 2.1 Comuni
+2024,10, |  |  | 2024,0,0,NA,ftth_pct,Tav. 2.1 Comuni
+2014,8, |  |  | 2014,0,1,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2015,9, |  |  | 2015,0,1,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2016,10, |  |  | 2016,0,2,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2017,11, |  |  | 2017,0,2,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2018,12, |  |  | 2018,0,2,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2019,13, |  |  | 2019,0,3,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2020,14, |  |  | 2020,0,1,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2021,15, |  |  | 2021,0,2,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2022,16, |  |  | 2022,0,2,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,tasso_imprenditorialita,Tav. 1.1 Comuni
+2014,8, |  |  | 2014,0,0,NA,densita_unita_locali,Tav. 2.1 Comuni
+2015,9, |  |  | 2015,0,1,NA,densita_unita_locali,Tav. 2.1 Comuni
+2016,10, |  |  | 2016,0,2,NA,densita_unita_locali,Tav. 2.1 Comuni
+2017,11, |  |  | 2017,0,0,NA,densita_unita_locali,Tav. 2.1 Comuni
+2018,12, |  |  | 2018,0,1,NA,densita_unita_locali,Tav. 2.1 Comuni
+2019,13, |  |  | 2019,0,1,NA,densita_unita_locali,Tav. 2.1 Comuni
+2020,14, |  |  | 2020,0,0,NA,densita_unita_locali,Tav. 2.1 Comuni
+2021,15, |  |  | 2021,0,1,NA,densita_unita_locali,Tav. 2.1 Comuni
+2022,16, |  |  | 2022,0,0,NA,densita_unita_locali,Tav. 2.1 Comuni
+2023,17, |  |  | 2023,0,0,NA,densita_unita_locali,Tav. 2.1 Comuni
+2014,8, |  |  | 2014,0,4635,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2015,9, |  |  | 2015,0,4624,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2016,10, |  |  | 2016,0,4605,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2017,11, |  |  | 2017,0,4417,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2018,12, |  |  | 2018,0,4586,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2019,13, |  |  | 2019,0,4616,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2020,14, |  |  | 2020,0,4810,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2021,15, |  |  | 2021,0,4507,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2022,16, |  |  | 2022,0,4390,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2023,17, |  |  | 2023,0,3402,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2024,18, |  |  | 2024,0,2976,convertito a 0 (fenomeno non esiste),turismo_arrivi,Tav. 2.1 Comuni
+2014,8, |  |  | 2014,0,4635,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2015,9, |  |  | 2015,0,4624,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2016,10, |  |  | 2016,0,4605,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2017,11, |  |  | 2017,0,4417,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2018,12, |  |  | 2018,0,4586,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2019,13, |  |  | 2019,0,4616,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2020,14, |  |  | 2020,0,4810,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2021,15, |  |  | 2021,0,4507,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2022,16, |  |  | 2022,0,4390,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2023,17, |  |  | 2023,0,3402,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2024,18, |  |  | 2024,0,2976,convertito a 0 (fenomeno non esiste),turismo_presenze,Tav. 3.1 Comuni
+2014,8, |  |  | 2014,0,4635,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2015,9, |  |  | 2015,0,4624,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2016,10, |  |  | 2016,0,4605,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2017,11, |  |  | 2017,0,4417,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2018,12, |  |  | 2018,0,4586,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2019,13, |  |  | 2019,0,4616,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2020,14, |  |  | 2020,0,4810,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2021,15, |  |  | 2021,0,4507,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2022,16, |  |  | 2022,0,4390,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2023,17, |  |  | 2023,0,3402,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2024,18, |  |  | 2024,0,2976,convertito a 0 (fenomeno non esiste),densita_turistica,Tav. 4.1 Comuni
+2014,8, |  |  | 2014,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2015,9, |  |  | 2015,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2016,10, |  |  | 2016,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2017,11, |  |  | 2017,0,1,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2018,12, |  |  | 2018,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2019,13, |  |  | 2019,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2020,14, |  |  | 2020,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2021,15, |  |  | 2021,0,1,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2022,16, |  |  | 2022,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2023,17, |  |  | 2023,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni
+2024,18, |  |  | 2024,0,0,convertito a 0 (fenomeno non esiste),densita_posti_letto,Tav. 7.1 Comuni

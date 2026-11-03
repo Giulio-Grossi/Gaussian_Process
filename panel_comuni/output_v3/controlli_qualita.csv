@@ -1,4 +1,6 @@
 controllo,oggetto,esito,n,dettaglio
+"celle ISTAT non numeriche (diverse da ""."")",ISTAT,WARN,21,indice_vecchiaia
+"segno ""."" (fenomeno non esiste) lasciato NA",ISTAT,WARN,168,auto_motorizzazione:6;densita_unita_locali:6;ftth_pct:119;moto_motorizzazione:7;redditi_bassi_pct:14;tasso_imprenditorialita:16
 unicita comune x anno,panel,OK,0,
 formato codice ISTAT 6 cifre,panel,OK,0,
 universo comuni,base,OK,7896,
@@ -55,7 +57,7 @@ non negativita,ru_procapite_kg,OK,0,
 coerenza annualita,ru_procapite_kg,OK,0,
 non negativita,rd_procapite_kg,OK,0,
 coerenza annualita,rd_procapite_kg,OK,0,
-copertura nazionale (>=50% comuni),indicatore x anno,WARN,27,turismo_arrivi:2014 turismo_arrivi:2015 turismo_arrivi:2016 turismo_arrivi:2017 turismo_arrivi:2018 turismo_arrivi:2019 turismo_arrivi:2020 turismo_arrivi:2021 turismo_arrivi:2022 turismo_presenze:2014 turismo_presenze:2015 turismo_presenze:2016 turismo_presenze:2017 turismo_presenze:2018 turismo_presenze:2019 turismo_presenze:2020 turismo_presenze:2021 turismo_presenze:2022 densita_turistica:2014 densita_turistica:2015 densita_turistica:2016 densita_turistica:2017 densita_turistica:2018 densita_turistica:2019 densita_turistica:2020 densita_turistica:2021 densita_turistica:2022
+copertura nazionale (>=50% comuni),indicatore x anno,OK,0,:
 regioni senza osservazioni,indicatore x anno,OK,0,
 valori su comuni non esistenti,fonti anno_corrente,OK,0,
 aggregazioni non attribuite ai comuni,ISPRA rifiuti,OK,0,4904 comune-anno in aggregazione
