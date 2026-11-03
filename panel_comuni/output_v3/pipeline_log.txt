@@ -1,5 +1,6 @@
-PIPELINE v3 |  2026-11-03 08:46:58 
+PIPELINE v3 |  2026-11-03 09:13:03 
 Geometrie ISTAT: 7896 comuni (confini 01/01/2025 = 31/12/2024). 
+AVVISO [variazioni ISTAT]: 814 righe senza data di decorrenza: usato 1 gennaio dell'anno 
 QC WARN [celle ISTAT non numeriche (diverse da ".") | ISTAT]: indice_vecchiaia 
 QC WARN [segno "." (fenomeno non esiste) lasciato NA | ISTAT]: auto_motorizzazione:6;densita_unita_locali:6;ftth_pct:119;moto_motorizzazione:7;redditi_bassi_pct:14;tasso_imprenditorialita:16 
 AVVISO [ISPRA suolo]: 166 righe con pro_com_t vuoto: codice da pro_com (es. 022040,022039,022042) 

@@ -60,9 +60,9 @@ coerenza annualita,rd_procapite_kg,OK,0,
 copertura nazionale (>=50% comuni),indicatore x anno,OK,0,:
 regioni senza osservazioni,indicatore x anno,OK,0,
 valori su comuni non esistenti,fonti anno_corrente,OK,0,
-aggregazioni non attribuite ai comuni,ISPRA rifiuti,OK,0,4904 comune-anno in aggregazione
-coerenza RD% ISTAT/ISPRA,rd_pct_istat vs rd_pct_ispra,OK,83477,mediana |diff| = 0.002; quota |diff|>1 = 0.000; cor = 1.000
+aggregazioni non attribuite ai comuni,ISPRA rifiuti,OK,0,4911 comune-anno in aggregazione
+coerenza RD% ISTAT/ISPRA,rd_pct_istat vs rd_pct_ispra,OK,83959,mediana |diff| = 0.002; quota |diff|>1 = 0.000; cor = 1.000
 coerenza suolo ha/area vs % ISTAT,.sp vs suolo_consumato_pct_istat,OK,78960,mediana |diff| = 0.043; quota |diff|>1 = 0.020; cor = 0.999
-codici ISPRA fuori geografia 2024,ISPRA rifiuti,WARN,3374,osservazioni non attribuite (soppressi/variati): vedi diagnostica
-nomi incoerenti codice-anno,ISPRA rifiuti,WARN,2619,
+codici ISPRA fuori geografia 2024,ISPRA rifiuti,WARN,2249,osservazioni non attribuite (soppressi/variati): vedi diagnostica
+nomi incoerenti codice-anno,ISPRA rifiuti,WARN,2643,
 righe anomale ISPRA,ISPRA rifiuti,OK,0,conservate in diagnostica
