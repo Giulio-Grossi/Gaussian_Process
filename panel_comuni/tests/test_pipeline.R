@@ -97,6 +97,34 @@ test_that('ISTAT: totale per sesso selezionato, codici numerici, anni extra', {
   expect_error(find_sheet(f, '9.9'), 'non univoca')
 })
 
+test_that('ISTAT: anno in cella unita sopra MASCHI|FEMMINE|TOTALE -> TOTALE (struttura reale tav. 1.1 pop)', {
+  td <- tempfile(); dir.create(td); cm <- synthetic_comuni(); f <- file.path(td, 'p.xlsx')
+  yy <- 2022:2023; g <- c('MASCHI', 'FEMMINE', 'TOTALE')
+  hdr_y <- c('Denominazione comune', 'Codice comune Istat', unlist(lapply(yy, function(y) c(y, '', ''))))
+  hdr_g <- c('', '', rep(g, length(yy)))
+  body <- t(vapply(seq_len(nrow(cm)), function(i) c(cm$comune[i], cm$codice_istat[i],
+                   unlist(lapply(yy, function(y) c(100 + i, 200 + i, 300 + 2 * i)))), character(2 + 3 * length(yy))))
+  m <- rbind(c('Tavola 1.1 - Popolazione residente per genere e comune', rep('', 7)), rep('', 8), hdr_y, hdr_g, body)
+  df <- as.data.frame(m); names(df) <- paste0('V', 1:8)
+  writexl::write_xlsx(list(`Tav. 1.1 Comuni` = df), f, col_names = FALSE)
+  r <- read_istat_table(f, '1.1', 'pop', yy, cm$codice_istat)
+  expect_equal(r$data$pop[r$data$codice_istat == '001001' & r$data$anno == 2023], 302)    # TOTALE, non MASCHI (101)
+  expect_true(all(grepl('totale', r$scelte$etichetta)))
+})
+
+test_that('ISTAT: segno "." = fenomeno non esiste -> 0 solo se punto_zero', {
+  td <- tempfile(); dir.create(td); cm <- synthetic_comuni(); f <- file.path(td, 'i.xlsx')
+  sh <- istat_sheet(cm$codice_istat, cm$comune, 2020:2021, 'Tavola 1.1 - Tasso di incidentalita')
+  sh[4, 3] <- '.'; sh[5, 4] <- '..'                       # riga 4 = primo comune (001001), col 3 = 2020
+  writexl::write_xlsx(list(`Tav. 1.1 Comuni` = sh), f, col_names = FALSE)
+  a <- read_istat_table(f, '1.1', 'x', 2020:2021, cm$codice_istat, punto_zero = TRUE)
+  b <- read_istat_table(f, '1.1', 'x', 2020:2021, cm$codice_istat, punto_zero = FALSE)
+  expect_equal(a$data$x[a$data$codice_istat == '001001' & a$data$anno == 2020], 0)
+  expect_true(is.na(b$data$x[b$data$codice_istat == '001001' & b$data$anno == 2020]))
+  expect_true(is.na(a$data$x[a$data$codice_istat == '001002' & a$data$anno == 2021]))   # '..' resta NA
+  expect_equal(sum(a$scelte$n_punto), 1L)
+})
+
 test_that('soil: semantica solo da alias, incrementi pluriennali riconosciuti', {
   fl <- tibble::tibble(name = c('csuolo1_22', 'csuolo2_22', 'csuolo8_22', 'csuolo8_15', 'csuolo9_22'),
                        alias = c('Suolo consumato 2022 [ha]', 'Suolo consumato 2022 [%]', 'Incremento 2021-2022 [ha]', 'Incremento 2012-2015 [ha]', 'boh'))

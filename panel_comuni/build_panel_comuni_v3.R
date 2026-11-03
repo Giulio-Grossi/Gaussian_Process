@@ -278,6 +278,7 @@ ISTAT_FILES <- c(
 # polarita: '+' piu' alto = piu' sostenibile; '-' opposto; 'contesto' non orientato; 'ambigua' da decidere.
 # geografia: 'armonizzata_2024' = fonte ricostruita su confini 31/12/2024; 'anno_corrente' = confini dell'anno.
 # Unita' ISTAT da confermare con 'titolo_tavola_fonte' (estratto dal file a run time).
+PUNTO_ZERO <- c('incidentalita', 'turismo_arrivi', 'turismo_presenze', 'densita_turistica', 'densita_posti_letto')
 SPEC_ISTAT <- tribble(
   ~indicatore, ~file, ~tavola, ~anni_teorici, ~dimensione, ~unita, ~polarita, ~descrizione,
   'popolazione',           'pop',         '1.1', 2014:2024, 'demografica',     'abitanti',            'contesto', 'Popolazione residente',
@@ -303,7 +304,11 @@ SPEC_ISTAT <- tribble(
   'densita_turistica',     'tourism',     '4.1', 2014:2024, 'economica',       'vedi titolo tavola',  'ambigua',  'Densita presenza turistica',
   'densita_posti_letto',   'tourism',     '7.1', 2014:2024, 'economica',       'vedi titolo tavola',  'ambigua',  'Densita posti letto'
 ) |> mutate(fonte = 'ISTAT A misura di Comune', url = paste0(ISTAT_BASE, ISTAT_FILES[file]),
-            campo = paste0('Tavola ', tavola), geografia = 'armonizzata_2024', in_completezza = TRUE)
+            campo = paste0('Tavola ', tavola), geografia = 'armonizzata_2024', in_completezza = TRUE,
+            # Segno ISTAT '(.)' = "Il fenomeno non esiste" (legenda 'Indice delle Tavole'). Per tassi con
+            # denominatore popolazione/superficie sempre > 0 equivale a 0 osservato (es. nessun incidente,
+            # nessun arrivo). Convertito SOLO qui, conteggiato in diagnostica; altrove resta NA.
+            punto_zero = indicatore %in% PUNTO_ZERO)
 
 SPEC_EXTRA <- tribble(
   ~indicatore, ~fonte, ~campo, ~anni_teorici, ~dimensione, ~unita, ~polarita, ~descrizione, ~geografia, ~in_completezza,
@@ -443,7 +448,7 @@ ffill_row <- function(v) {
   if (sum(nzchar(v)) < 2) return(v)          # riga titolo: non propagare
   cur <- ''; for (i in seq_along(v)) { if (nzchar(v[i])) cur <- v[i] else v[i] <- cur }; v }
 
-read_istat_table <- function(path, table, id, years_exp, valid_codes = NULL) {
+read_istat_table <- function(path, table, id, years_exp, valid_codes = NULL, punto_zero = FALSE) {
   sheet <- find_sheet(path, table)
   m <- as.matrix(suppressMessages(readxl::read_excel(path, sheet = sheet, col_names = FALSE,
                  col_types = 'text', .name_repair = 'minimal')))   # testo: nessuna perdita precisione
@@ -473,10 +478,22 @@ read_istat_table <- function(path, table, id, years_exp, valid_codes = NULL) {
   sc <- rowSums(hy >= 2000 & hy <= 2030, na.rm = TRUE)
   yr <- which.max(sc); if (sc[yr] < 1L) stop('Riga anni non trovata: ', sheet)
   yrow <- hy[yr, ]
+  # anno in cella unita su piu colonne (es. 2014 sopra MASCHI|FEMMINE|TOTALE): propaga l'anno a destra
+  # SOLO su colonne senza anno ma con etichetta nelle righe sotto l'anno (sotto-intestazione del gruppo)
+  if (yr < nrow(hd)) {
+    sub_lab <- apply(hd[(yr + 1):nrow(hd), , drop = FALSE], 2, function(z) any(nzchar(z)))
+    cur <- NA_integer_
+    for (j in seq_along(yrow)) {
+      if (!is.na(yrow[j]) && yrow[j] >= 2000 && yrow[j] <= 2030) cur <- yrow[j]
+      else if (!is.na(cur) && is.na(yrow[j]) && !nzchar(hd[yr, j]) && sub_lab[j]) yrow[j] <- cur
+      else cur <- NA_integer_
+    }
+  }
   hfill <- apply(hd, 1, ffill_row); if (is.null(dim(hfill))) hfill <- matrix(hfill, ncol = 1)
   hlab <- apply(hfill, 1, function(z) paste(norm_txt(z), collapse = ' | '))   # etichetta completa per colonna
   th <- hd[seq_len(max(0, yr - 1)), 1]; th <- th[nzchar(th) & !grepl('^indice$', norm_txt(th))]; title <- paste(unique(th), collapse = ' / ')
-  nmcol <- setdiff(which(grepl('denominazione|comune', lab) & !grepl('codice', lab)), jc)
+  nmcol <- setdiff(which(grepl('denominazione comune', lab) & !grepl('codice', lab)), jc)
+  if (!length(nmcol)) nmcol <- setdiff(which(grepl('denominazione|comune', lab) & !grepl('codice|ripartizione|regione|provincia', lab)), jc)
   nmv <- if (length(nmcol)) m[, nmcol[1]] else rep(NA_character_, nr)
   keep <- which(!is.na(cd) & seq_len(nr) >= r0)
   if (length(unique(cd[keep])) < CONFIG$n_min_comuni) stop('Copertura comunale insufficiente: ', sheet)
@@ -489,9 +506,13 @@ read_istat_table <- function(path, table, id, years_exp, valid_codes = NULL) {
       if (length(tot) != 1L) stop('Anno ', y, ': ', length(js), ' colonne, totale non univoco (', sheet, ')')
       js <- tot
     }
-    v <- num_it(m[keep, js])
+    raw <- m[keep, js]; dot <- trimws(raw) == '.'
+    raw[dot] <- NA_character_                               # '.' gestito a parte, non come token generico
+    v <- num_it(raw)
+    if (punto_zero) v[dot] <- 0
     scelte[[as.character(y)]] <- tibble(anno = y, colonna = js, etichetta = hlab[js],
-                                        n_non_numerici = attr(v, 'n_non_numerici'))
+                                        n_non_numerici = attr(v, 'n_non_numerici'), n_punto = sum(dot),
+                                        punto = if (punto_zero) 'convertito a 0 (fenomeno non esiste)' else 'NA')
     d <- tibble(codice_istat = cd[keep], anno = as.integer(y), val = as.numeric(v), nome = nmv[keep])
     ck <- d |> group_by(codice_istat) |> summarise(nv = n_distinct(val, na.rm = TRUE), .groups = 'drop')
     if (any(ck$nv > 1L)) stop('Duplicati discordanti ', id, ' / ', y)
@@ -1166,7 +1187,7 @@ run_pipeline <- function(root = ROOT) {
     for (i in seq_len(nrow(SPEC_ISTAT))) {
       z <- SPEC_ISTAT[i, ]; fp <- paths[[z$file]]
       if (is.na(fp)) { add_error(z$indicatore, 'file sorgente non scaricato'); next }
-      r <- tryCatch(read_istat_table(fp, z$tavola, z$indicatore, z$anni_teorici[[1]], vc), error = function(e) { add_error(z$indicatore, e); NULL })
+      r <- tryCatch(read_istat_table(fp, z$tavola, z$indicatore, z$anni_teorici[[1]], vc, z$punto_zero), error = function(e) { add_error(z$indicatore, e); NULL })
       if (is.null(r)) next
       if (length(r$extra)) logmsg('ISTAT ', z$indicatore, ': anni aggiuntivi trovati ', paste(r$extra, collapse = ','))
       if (length(r$mancanti)) add_error(z$indicatore, paste('anni attesi assenti nel file:', paste(r$mancanti, collapse = ',')), 'AVVISO')
@@ -1175,6 +1196,14 @@ run_pipeline <- function(root = ROOT) {
       titoli[[z$indicatore]] <- r$title
     }
     write_diag(bind_rows(scelte), 'istat_colonne_scelte.csv')
+    sc <- bind_rows(scelte)
+    if (nrow(sc)) {
+      nn <- sc |> group_by(indicatore) |> summarise(n = sum(n_non_numerici), np = sum(n_punto[punto == 'NA']), .groups = 'drop')
+      add_qc('celle ISTAT non numeriche (diverse da ".")', 'ISTAT', if (any(nn$n > 0)) 'WARN' else 'OK', sum(nn$n),
+             paste(nn$indicatore[nn$n > 0], collapse = ';'))
+      add_qc('segno "." (fenomeno non esiste) lasciato NA', 'ISTAT', if (any(nn$np > 0)) 'WARN' else 'OK', sum(nn$np),
+             paste(paste0(nn$indicatore, ':', nn$np)[nn$np > 0], collapse = ';'))
+    }
     if (CONFIG$do_catalogo) write_diag(tryCatch(istat_catalog(paths, vc), error = function(e) { add_error('catalogo ISTAT', e); NULL }), 'catalogo_tavole_istat.csv')
   }
   # anni teorici ISTAT = attesi U trovati (massimizza copertura, nulla di inventato)
@@ -1275,7 +1304,7 @@ run_pipeline <- function(root = ROOT) {
                          titolo_tavola_fonte = vapply(indicatore, function(i) titoli[[i]] %||% NA_character_, '')) |>
     left_join(anni_acq, by = 'indicatore') |> left_join(anni_dat, by = 'indicatore') |>
     mutate(stato_estrazione = if_else(is.na(anni_acquisiti), 'FONTE_NON_ACQUISITA', 'acquisito')) |>
-    select(indicatore, descrizione, dimensione, unita, polarita, fonte, url, campo, geografia, in_completezza,
+    select(indicatore, descrizione, dimensione, unita, polarita, fonte, url, campo, geografia, in_completezza, punto_zero,
            anni_teorici, anni_acquisiti, anni_con_dati, n_osservazioni, stato_estrazione, titolo_tavola_fonte)
 
   # J. scritture

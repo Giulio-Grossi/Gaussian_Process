@@ -17,7 +17,8 @@ CFG <- list(
   n_perm     = 199,        # permutazioni test Moran
   rho_alto   = 0.85,       # soglia ridondanza (Spearman)
   mappe_stato = TRUE,      # mappe di completezza per indicatore (lente: ~1 min/indicatore)
-  mappe_valori = TRUE
+  mappe_valori = TRUE,
+  riusa_mappe = TRUE       # salta mappe di stato gia presenti (rigenerare: FALSE)
 )
 `%||%` <- function(a, b) if (is.null(a) || !length(a)) b else a
 
@@ -141,6 +142,7 @@ gsave(p, 'mappa_completezza_per_anno.png', 12, 13)
 
 # (b) una mappa di stato per indicatore (anni teorici 2016+)
 if (CFG$mappe_stato) for (id in setdiff(ids, IND$indicatore[IND$derivato])) {
+  if (CFG$riusa_mappe && file.exists(file.path(OUT, 'mappe_completezza', paste0(id, '.png')))) next
   d <- ST[indicatore == id]; yy <- sort(unique(d[stato != 'ANNO_NON_RILEVATO', anno]))
   if (!length(yy)) next
   gm <- merge(Gs, as.data.frame(d[anno %in% yy, .(codice_istat, anno, stato)]), by = 'codice_istat')
@@ -157,11 +159,11 @@ if (CFG$mappe_stato) for (id in setdiff(ids, IND$indicatore[IND$derivato])) {
 # ---- 4. STATISTICHE DESCRITTIVE ------------------------------------------------------------
 skew <- function(x) { x <- x[!is.na(x)]; if (length(x) < 3 || sd(x) == 0) return(NA_real_); mean((x - mean(x))^3) / sd(x)^3 }
 DESC <- rbindlist(lapply(ids, function(id) as.data.table(P)[, {
-  x <- get(id); o <- x[!is.na(x)]; m <- stats::median(o); md <- stats::mad(o)
+  x <- get(id); o <- x[!is.na(x)]; m <- if (length(o)) stats::median(o) else NA_real_; md <- if (length(o) > 1) stats::mad(o) else NA_real_
   .(n = length(o), media = mean(o), sd = sd(o), cv = sd(o) / abs(mean(o)), min = suppressWarnings(min(o)),
     p05 = quantile(o, .05, names = FALSE), p25 = quantile(o, .25, names = FALSE), mediana = m,
     p75 = quantile(o, .75, names = FALSE), p95 = quantile(o, .95, names = FALSE), max = suppressWarnings(max(o)),
-    asimmetria = skew(o), quota_zeri = mean(o == 0), n_outlier_5mad = if (md > 0) sum(abs(o - m) > 5 * md) else NA_integer_)
+    asimmetria = skew(o), quota_zeri = mean(o == 0), n_outlier_5mad = if (isTRUE(md > 0)) sum(abs(o - m) > 5 * md) else NA_integer_)
 }, by = anno][n > 0][, indicatore := id][]), use.names = TRUE)
 DESC <- merge(as.data.table(IND[, c('indicatore', 'dimensione', 'unita', 'polarita')]), DESC, by = 'indicatore')
 wcsv(DESC[order(dimensione, indicatore, anno)], 'statistiche_descrittive_2016.csv')
