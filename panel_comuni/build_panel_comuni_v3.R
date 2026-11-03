@@ -401,10 +401,17 @@ read_variazioni <- function(RAW) {
   col <- function(rx, excl = '^$') { i <- which(grepl(rx, nn) & !grepl(excl, nn))
     if (length(i) < 1) stop('Variazioni: colonna non trovata: ', rx, ' | campi: ', paste(names(d), collapse = ' | '))
     i[1] }
-  j_tipo <- col('tipo.*variaz'); j_cod <- col('codice.*comune', 'associat|nuov')
-  j_ass  <- col('codice.*(associat|nuov)'); j_dat <- col('decorrenza|^data')
+  j_tipo <- col('tipo.*variaz'); j_cod <- col('codice.*comune', 'associat|nuov|regione|unita')
+  j_ass  <- col('codice del comune associato|nuovo codice istat', 'regione|unita'); j_dat <- col('decorrenza|^data')
   dt <- suppressWarnings(as.Date(d[[j_dat]], tryFormats = c('%d/%m/%Y', '%Y-%m-%d')))
   if (all(is.na(dt))) dt <- as.Date(suppressWarnings(as.numeric(d[[j_dat]])), origin = '1899-12-30')
+  # data di decorrenza vuota in parte del file (es. 538 righe AP): ripiego sul 1 gennaio dell'anno, marcato
+  j_anno <- which(nn == 'anno')[1]
+  stimata <- is.na(dt) & !is.na(j_anno)
+  if (any(stimata)) {
+    dt[stimata] <- as.Date(paste0(trimws(d[[j_anno]][stimata]), '-01-01'), optional = TRUE)
+    add_error('variazioni ISTAT', paste(sum(stimata & !is.na(dt)), 'righe senza data di decorrenza: usato 1 gennaio dell\'anno'), 'AVVISO')
+  }
   v <- tibble(tipo = toupper(trimws(d[[j_tipo]])), codice = code6(d[[j_cod]]),
               codice_assoc = code6(d[[j_ass]]), data = dt) |> filter(!is.na(data))
   list(

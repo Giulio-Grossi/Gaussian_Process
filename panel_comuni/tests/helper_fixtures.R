@@ -96,8 +96,12 @@ istat_sheet <- function(codes, names, years, title, groups = NULL, f = function(
 }
 
 write_variazioni_zip <- function(dir) {
+  # colonne nell'ordine del file reale: 'Codice Regione associato' PRIMA del codice comune associato
   d <- data.frame(`Anno` = c('2023', '2023', '2023'), `Tipo variazione` = c('CS', 'ES', 'AP'),
+                  `Codice Regione` = c('02', '01', '01'), `Codice Unità territoriale sovracomunale` = c('007', '001', '099'),
                   `Codice Comune formato numerico` = c('7012', '1099', '99001'),
+                  `Codice Regione associato alla variazione` = c('', '02', '01'),
+                  `Codice Unità territoriale sovracomunale associato alla variazione` = c('', '007', '001'),
                   `Denominazione Comune` = c('Nuovo Fuso', 'Soppresso', 'Comune 13'),
                   `Codice del Comune associato alla variazione o nuovo codice Istat del Comune` = c('', '7012', '1013'),
                   `Denominazione Comune associata alla variazione o nuova denominazione` = c('', 'Nuovo Fuso', 'Comune 13'),
