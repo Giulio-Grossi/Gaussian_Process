@@ -7,3 +7,4 @@ output_v3/*.gpkg
 output_v3/panel_comuni.csv
 output_v3/completezza_comune_anno_dimensione.csv
 output_v3/stato_celle_long.rds
+analisi_2016.log
