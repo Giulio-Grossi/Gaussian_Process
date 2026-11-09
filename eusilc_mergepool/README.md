@@ -145,3 +145,12 @@ Il file unico `PPHH_long_reduced.dta` (persona-anno) attacca alla persona le var
 
 Il peso familiare unico è `hh_w`: vale DB095 per le celle prese da L-2014 in poi, DB090 per quelle fino a L-2013; `hh_w_src` dice quale dei due. In ogni release-anno somma a circa il numero di famiglie, calcolato sulle coorti di quella release. Nel panel le coorti di uno stesso anno vengono da release diverse, quindi la somma per anno va controllata in `reduce_hhweight_diag.csv` prima di usarlo.
 
+## 8. Report osservazioni valide (`valid_obs_report_long.do`)
+
+Versione longitudinale di `valid_obs_report.do`. Lavora su `OUTPUT/PPHH_long_reduced.dta` e scrive i file `long_valid_obs_*.csv` e `long_flag_*.csv` direttamente in OUTPUT.
+
+Ogni variabile ha un universo ricavato dai dati, che serve da denominatore per le percentuali `_univ` e per i flag:
+- **P**: solo righe con `in_P == 1`;
+- **H**: solo righe con `hh_linked == 1`;
+- **R**: tutte le persone-anno.
+
