@@ -210,6 +210,34 @@ local hmap "hb030 id Household ID (DB030/HB030)|hb070 person_id Person respondin
 red_rename `"`hmap'"' `ph'
 postclose `ph'
 
+* --- peso famiglia unico: DB095 (release da L-2014) altrimenti DB090 (fino a L-2013).
+*     Il nome cambia con la release da cui proviene la cella, non con l'anno:
+*     nello stesso anno possono convivere coorti con DB090 e coorti con DB095.
+capture confirm variable hh_weight_l, exact
+local has95 = (_rc == 0)
+capture confirm variable hh_weight, exact
+local has90 = (_rc == 0)
+generate double hh_w = .
+generate str5 hh_w_src = ""
+if `has95' {
+    quietly replace hh_w_src = "DB095" if !missing(hh_weight_l)
+    quietly replace hh_w = hh_weight_l if !missing(hh_weight_l)
+}
+if `has90' {
+    quietly replace hh_w_src = "DB090" if missing(hh_w) & !missing(hh_weight)
+    quietly replace hh_w = hh_weight if missing(hh_w) & !missing(hh_weight)
+}
+label variable hh_w "Peso familiare del file D (DB095 da L-2014, DB090 fino a L-2013)"
+label variable hh_w_src "Variabile d'origine di hh_w"
+* diagnostica: somme per anno e release di provenienza
+preserve
+generate byte _one = 1
+generate byte _pos = hh_w > 0 & !missing(hh_w)
+collapse (sum) n_hh=_one n_hh_wpos=_pos hh_w_sum=hh_w, by(year src_release hh_w_src)
+bysort year: egen double hh_w_sum_year = total(hh_w_sum)
+export delimited using "`out'/reduce_hhweight_diag.csv", replace
+restore
+
 local hids "country year hh_uid hh_num hid_s cohort_id src_release"
 local hnew ""
 preserve
@@ -228,6 +256,7 @@ foreach v of local hids {
     if !_rc local _ok `_ok' `v'
 }
 local hids `_ok'
+local hnew `hnew' hh_w hh_w_src
 keep `hids' `hnew'
 order `hids' `hnew'
 compress
@@ -382,4 +411,35 @@ red_coverage "`pharm' `pnew' `lwnew'" "`out'/reduce_coverage_PP.csv"
 save "`out'/PP_long_reduced.dta", replace
 di as result "Persone: `=_N' righe -> `out'/PP_long_reduced.dta"
 if "$RED_CREATED" != "" di as text "Sorgenti assenti create vuote per le armonizzazioni: $RED_CREATED"
+
+*==============================================================================
+* 3. FILE UNICO PERSONE + FAMIGLIE (persona-anno)
+*==============================================================================
+* Le variabili familiari si attaccano alla persona tramite la sua famiglia
+* nell'anno (hh_uid). Restano mancanti, con hh_linked = 0, se la persona ha piu'
+* famiglie nell'anno (multi_hh = 1) o se la famiglia non ha record H (non
+* rispondente). Per stime a livello famiglia usare HH_long_reduced.dta: qui
+* ogni famiglia compare una volta per ogni suo componente.
+quietly describe using "`out'/HH_long_reduced.dta", varlist
+local hvl `r(varlist)'
+unab pvl : _all
+local hadd : list hvl - pvl
+local hadd : list hadd - hids
+local hclash : list hvl & pvl
+local hclash : list hclash - hids
+if "`hclash'" != "" di as text "Variabili familiari gia' presenti nel file persone (si tengono quelle delle persone): `hclash'"
+merge m:1 year hh_uid using "`out'/HH_long_reduced.dta", keepusing(`hadd') keep(master match)
+generate byte hh_linked = _merge == 3
+drop _merge
+label variable hh_linked "variabili familiari attaccate (famiglia unica e rispondente nell'anno)"
+quietly count if hh_linked == 0 & multi_hh == 0 & hh_uid != ""
+local nonresp = r(N)
+quietly count if multi_hh == 1
+di as text "File unico: `nonresp' persone-anno con famiglia senza record H; `r(N)' persone-anno con piu' famiglie (variabili familiari mancanti)"
+order `pids' hh_linked
+isid person_num year
+xtset person_num year
+label data "EU-SILC longitudinale IT - persone con variabili familiari (reduce_long.do)"
+save "`out'/PPHH_long_reduced.dta", replace
+di as result "File unico: `=_N' righe -> `out'/PPHH_long_reduced.dta"
 log close redlog

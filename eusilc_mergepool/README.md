@@ -141,3 +141,7 @@ Le differenze sono descritte in testa al file:
 
 I pesi longitudinali si aggiungono con `RED_LW` (es. `"rb064:2024"`).
 
+Il file unico `PPHH_long_reduced.dta` (persona-anno) attacca alla persona le variabili della sua famiglia (`hh_linked = 1`). Non le attacca se nell'anno la persona ha più famiglie o se la famiglia non è rispondente.
+
+Il peso familiare unico è `hh_w`: vale DB095 per le celle prese da L-2014 in poi, DB090 per quelle fino a L-2013; `hh_w_src` dice quale dei due. In ogni release-anno somma a circa il numero di famiglie, calcolato sulle coorti di quella release. Nel panel le coorti di uno stesso anno vengono da release diverse, quindi la somma per anno va controllata in `reduce_hhweight_diag.csv` prima di usarlo.
+
