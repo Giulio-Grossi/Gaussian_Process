@@ -118,3 +118,26 @@ keep if inrange(year, 2021, 2024)
   - Nessun `DESIGN_DURATION_MISMATCH`.
 - **Identità personale.** `person_uid` usa la coorte della famiglia nel primo anno osservato della persona (`p_cohort`). Le relazioni con famiglie di altre coorti restano in `masterR`. Per ogni persona-anno il record P viene da una sola release, la più recente.
 
+## 7. Riduzione e rinomina (`reduce_long.do`)
+
+Riproduce sul panel longitudinale la selezione e i nomi di `DATASET_REDUCTION.do` (versione trasversale). Legge l'ultima run certificata (`LATEST_CERTIFIED.txt`) e scrive in `<run>/reduced/`:
+- `HH_long_reduced.dta`: famiglia-anno, da `masterH` più le variabili D (regione, urbanizzazione, pesi, strati, PSU);
+- `PP_long_reduced.dta`: persona-anno, da `panel_person_year`, con `xtset person_num year`;
+- `reduce_vars_*.csv`: per ogni variabile richiesta, se è stata trovata e rinominata, se manca, oppure se manca ma è stata creata vuota perché serve a un'armonizzazione;
+- `reduce_coverage_*.csv`: osservazioni valide per anno.
+
+Le armonizzazioni sono quelle dello script trasversale:
+- arretrati HS011/HS021/HS031;
+- titolo di godimento HH021;
+- `educ3` e `isced`;
+- `ever_job`, `empl`, `isced_curr`, `basic_act`;
+- `birth_country` e `citizenship`.
+
+Le differenze sono descritte in testa al file:
+- nomi in minuscolo;
+- nessun `destring, force`;
+- soglia unica 2010;
+- pesi propri del longitudinale.
+
+I pesi longitudinali si aggiungono con `RED_LW` (es. `"rb064:2024"`).
+
