@@ -12,6 +12,7 @@
 *!         <run>/reduced/reduce_vars_*.csv     variabili richieste: presenti/assenti
 *!         <run>/reduced/reduce_coverage_*.csv osservazioni valide per anno
 *!         <run>/reduced/reduce_long.log
+*!         <RED_FINALDIR o RED_OUTROOT>/PPHH_long_reduced.dta  (copia del file finale)
 *! I file della run certificata non vengono modificati.
 *!
 *! Differenze rispetto alla versione trasversale (motivate):
@@ -45,6 +46,10 @@ global RED_RUN       ""     // cartella di una run; vuoto = ultima run certifica
 * persone con finestra completa nel panel e solo negli anni della finestra.
 global RED_LW        ""
 global RED_YEARSPLIT 2010   // da quest'anno si usano HS011/HS021/HS031/HH021
+* Copia del file finale (persone + famiglie) fuori dalla cartella della run.
+* Vuoto = RED_OUTROOT. La copia viene sovrascritta a ogni esecuzione; la run di
+* origine resta scritta nel file (char _dta[red_source]) e nel log.
+global RED_FINALDIR  ""
 
 *==============================================================================
 * UTILITA'
@@ -440,6 +445,11 @@ order `pids' hh_linked
 isid person_num year
 xtset person_num year
 label data "EU-SILC longitudinale IT - persone con variabili familiari (reduce_long.do)"
+char _dta[red_source] "$RED_RUN"
 save "`out'/PPHH_long_reduced.dta", replace
 di as result "File unico: `=_N' righe -> `out'/PPHH_long_reduced.dta"
+local fin `"$RED_FINALDIR"'
+if `"`fin'"' == "" local fin `"$RED_OUTROOT"'
+save "`fin'/PPHH_long_reduced.dta", replace
+di as result "File finale copiato in: `fin'/PPHH_long_reduced.dta (run di origine: $RED_RUN)"
 log close redlog
