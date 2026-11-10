@@ -154,3 +154,23 @@ Ogni variabile ha un universo ricavato dai dati, che serve da denominatore per l
 - **H**: solo righe con `hh_linked == 1`;
 - **R**: tutte le persone-anno.
 
+
+## 9. Nomi, etichette e affidabilità nel tempo (`eusilc_long_analysis.do`)
+
+Lavora sull'ultima run certificata di `mergepool_long.do` (`OUTPUT/LATEST_CERTIFIED.txt`, oppure `NM_RUN`). Non usa la versione ridotta.
+
+**Parte A – nomi ed etichette.** Un dizionario interno (265 codici D/H/R/P, secondo le linee guida delle variabili target EU-SILC) dà a ogni codice un nome breve inglese (`hy020` → `inc_disp`, `pl031` → `act_status`) e un'etichetta che termina con il codice originale tra `[ ]`. Flag e fattori di imputazione seguono il nome (`inc_disp_f`, `inc_disp_i`). I codici fuori dal dizionario restano invariati e risultano `not_mapped` in `variable_dictionary.csv`. Output in `OUTPUT/LONG_NAMED`:
+- `EUSILC_long_persons.dta` (persona-anno, `xtset person_num year`);
+- `EUSILC_long_households.dta` (famiglia-anno, H + variabili D; peso `hh_wgt`, fonte in `hh_wgt_src`);
+- `EUSILC_long_persons_hh.dta` (persona-anno con le variabili familiari, `hh_linked`);
+- `variable_dictionary.csv`.
+
+**Parte B – analisi** (`AN_RUN = 1`). Ogni variabile numerica di contenuto viene classificata come categoriale (al massimo `AN_MAXCAT` modalità intere) o continua. Si stimano media pesata o quote per anno, con SE approssimati (n efficace di Kish × `AN_DEFF`). Pesi: RB060 per le variabili R, PB050 per le variabili P (RB050/PB040 solo negli anni in cui mancano, cioè 2004–05), DB095/DB090 per le famiglie. I segnali calcolati sono:
+- salti di livello non spiegati (|z| > `AN_ZTHR` e variazione oltre `AN_RELTHR`/`AN_PPTHR`), con gli anni `AN_KNOWN` riportati a parte;
+- picchi isolati e rumore rispetto ai due anni vicini (vale 1 quando c'è solo variazione campionaria);
+- eterogeneità fra coorti nello stesso anno;
+- discontinuità di copertura;
+- stabilità intra-unità t/t-1;
+- incoerenza degli attributi fissi.
+
+Il giudizio per variabile è `affidabile`, `da verificare` o `instabile`. Output in `OUTPUT/LONG_ANALYSIS`: `stability_summary.csv/.dta`, `desc_by_year.csv`, `cat_shares_by_year.csv`, `cohort_heterogeneity.csv`, `within_person.csv`, `graphs/` e `README_analysis.txt`.
